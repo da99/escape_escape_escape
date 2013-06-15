@@ -1,7 +1,7 @@
 
 var _     = require('underscore')
 , assert  = require('assert')
-, E       = require('../lib/sanitize').Sanitize
+, E       = require('../lib/e_e_e').Sanitize
 ;
 
 

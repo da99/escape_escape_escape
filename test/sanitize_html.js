@@ -4,7 +4,7 @@ var _      = require('underscore')
 , unhtml   = require('unhtml')
 , special  = require('special-html')
 , assert   = require('assert')
-, Sanitize = require('../lib/sanitize').Sanitize
+, Sanitize = require('../lib/e_e_e').Sanitize
 , E        = Sanitize.html
 ;
 var BRACKET = " < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060  \

@@ -1,4 +1,4 @@
 What is it?
 ====================
 
-NPM module to escape HTML
+NPM module to escape and sanitize HTML.
