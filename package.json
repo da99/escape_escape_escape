@@ -1,6 +1,6 @@
 {
   "name": "escape_escape_escape",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "My way of escaping HTML.",
   "main": "lib/e_e_e.js",
   "directories": {
