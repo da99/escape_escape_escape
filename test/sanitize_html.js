@@ -38,6 +38,11 @@ describe( 'Sanitize', function () {
     assert.equal(_.uniq(E(BRACKET.trim()).split(/\s+/)).join(' '), "&lt; %3C");
   });
 
+  it( 'escapes all keys in nested objects', function () {
+    var HTML = "<b>test</b>";
+    assert.deepEqual(E({" a >":{" a >": HTML}}), {" a &gt;": {" a &gt;": _s.escapeHTML(HTML)}});
+  });
+
   it( 'escapes all values in nested objects', function () {
     var HTML = "<b>test</b>";
     assert.deepEqual(E({name:{name: HTML}}), {name: {name: _s.escapeHTML(HTML)}});
