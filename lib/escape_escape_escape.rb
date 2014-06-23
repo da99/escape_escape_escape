@@ -1,8 +1,11 @@
 
 
 require "sanitize"
+require "htmlentities"
 
 class Escape_Escape_Escape
+
+  CODER = HTMLEntities.new(:xhtml1)
 
   REPEATING_DOTS          = /\.{1,}\//
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
@@ -68,6 +71,14 @@ class Escape_Escape_Escape
 
     def html s
       Sanitize.fragment( clean_utf8(s), CONFIG )
+    end
+
+    def unescape_inner_html s
+      CODER.decode(clean_utf8(s))
+    end
+
+    def inner_html s
+      CODER.encode(unescape_inner_html(s), :named, :hexadecimal)
     end
 
   end # === class self ===
