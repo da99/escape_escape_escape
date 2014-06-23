@@ -2,10 +2,6 @@
 
 require "sanitize"
 
-def Escape_Escape_Escape s
-  Escape_Escape_Escape.html(s)
-end
-
 class Escape_Escape_Escape
 
   REPEATING_DOTS          = /\.{1,}\//
