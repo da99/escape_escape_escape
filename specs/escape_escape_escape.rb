@@ -4,16 +4,18 @@ require "escape_escape_escape"
 
 Dir.glob("specs/as_json/*.json").sort.each { |f|
   contents = MultiJson.load(File.read f)
-  describe "'#{File.basename(f).gsub(/\A\d+-|\.json\Z/, '').gsub('_', ' ')}'" do
+  method_name = File.basename(f).gsub(/\A\d+-|\.json\Z/, '')
+  describe ":#{method_name}" do
     contents.each { |t|
       it t["it"] do
-        i = t["input"]
-        o = t["output"]
+        i      = t["input"]
+        o      = t["output"]
+        actual = Escape_Escape_Escape.send(method_name, i)
+
         case o
         when String
-          Escape_Escape_Escape(i).should == o
+          actual.should == o
         when Array
-          actual = Escape_Escape_Escape(i)
           target = o.pop
           begin
             if o[1].is_a?(Array)

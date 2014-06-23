@@ -21,11 +21,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "addressable"  , "~> 2.3"
-  spec.add_dependency "escape_utils" , "~> 1.0"
-  spec.add_dependency "loofah"       , "~> 2.0"
-  spec.add_dependency "htmlentities" , "~> 4.3"
-  spec.add_dependency "sanitize"     , "~> 2.1"
+  spec.add_dependency "sanitize"     , "~> 3.0"
 
   spec.add_development_dependency "pry"           , "~> 0.9"
   spec.add_development_dependency "rake"          , "~> 10.3"

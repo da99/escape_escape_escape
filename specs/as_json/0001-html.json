@@ -1,0 +1,17 @@
+
+[
+
+  {
+    "it" : "does not re-escape already escaped text",
+    "input"  : "<p>Hello &amp; GoodBye</p>",
+    "output" : "<p>Hello &amp; GoodBye</p>"
+  },
+
+  {
+    "it" : "removes \"javascript:\" protocol in \"href\" attributes",
+    "input" : "<a href=\"javascript:alert()\">hello</a>",
+    "output" : "<a>hello</a>"
+  }
+
+
+]
