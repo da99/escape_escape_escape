@@ -11,6 +11,27 @@ class Escape_Escape_Escape
   TABS                    = "\t"
   CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]/  # Don't use "\x20" because that is the space character.
   WHITE_SPACE             = /[[:space:]]&&[^\n]/            # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
+  CONFIG                  = {
+    :attributes    => Sanitize::Config::RELAXED[:attributes].dup,
+    :css           => Sanitize::Config::RELAXED[:css].dup,
+    :allow_doctype => true,
+    :elements => %{
+      a blockquote body br caption cite code div
+      img pre p span
+      h1 h2 h3 h4
+      i em strong sub sup
+      ol li ul
+      html title style
+    },
+    :protocols => {
+      "a"=>{
+        "href"=>["ftp", "http", "https", "mailto", :relative]
+      },
+      "img"=>{
+        "src"=>["http", "https", :relative]
+      }
+    }
+  }
 
   ENCODING_OPTIONS_CLEAN_UTF8 = {
     :invalid           => :replace, # Replace invalid byte sequences
@@ -46,7 +67,7 @@ class Escape_Escape_Escape
     end
 
     def html s
-      Sanitize.fragment( clean_utf8(s), Sanitize::Config::RELAXED )
+      Sanitize.fragment( clean_utf8(s), CONFIG )
     end
 
   end # === class self ===
