@@ -8,6 +8,12 @@
   },
 
   {
+    "it" : "removes invalid attributes",
+    "input"  : "<a ignoreme=\"blah\">Hello GoodBye</a>",
+    "output" : "<a>Hello GoodBye</a>"
+  },
+
+  {
     "it" : "removes \"javascript:\" protocol in \"href\" attributes",
     "input" : "<a href=\"javascript:alert()\">hello</a>",
     "output" : "<a>hello</a>"
