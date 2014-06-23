@@ -10,11 +10,11 @@ class Escape_Escape_Escape
 
   REPEATING_DOTS          = /\.{1,}\//
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
-  UN_PRINT_ABLE           = /[^[:print:]]+/
+  UN_PRINT_ABLE           = /[^[:print:]\n]/
   CR                      = "\r"
   TABS                    = "\t"
-  CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]+/  # Don't use "\x20" because that is the space character.
-  WHITE_SPACE             = /[[:space:]]/            # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
+  CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]/  # Don't use "\x20" because that is the space character.
+  WHITE_SPACE             = /[[:space:]]&&[^\n]/            # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
 
   ENCODING_OPTIONS_CLEAN_UTF8 = {
     :invalid           => :replace, # Replace invalid byte sequences
@@ -38,9 +38,9 @@ class Escape_Escape_Escape
     def clean_utf8 s
       s.
         encode(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8).
-        gsub(UN_PRINT_ABLE            , '').
-        gsub(CR                       , "").
         gsub(TABS                     , "  ").
+        gsub(CR                       , "").
+        gsub(UN_PRINT_ABLE            , '').
         gsub(CONTROL_CHARS            , "\n" ).
         gsub(WHITE_SPACE              , " ")
     end
