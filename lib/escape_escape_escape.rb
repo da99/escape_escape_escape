@@ -19,12 +19,11 @@ class Escape_Escape_Escape
     :css           => Sanitize::Config::RELAXED[:css].dup,
     :allow_doctype => true,
     :elements => %w{
-      a blockquote body br caption cite code div
+      a blockquote br caption cite code div
       img pre p span
       h1 h2 h3 h4
       i em strong sub sup
       ol li ul
-      html title style
     },
     :protocols => {
       "a"=>{
