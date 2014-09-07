@@ -41,12 +41,14 @@ class Escape_Escape_Escape
   VALID_HTML_ID  = /^[0-9a-z_]+$/i;
   VALID_HTML_TAG = /^[0-9a-z_]+$/i;
 
+  REGEXP_OPTS = Regexp::FIXEDENCODING | Regexp::IGNORECASE
+
   # tabs, etc.
-  Control = Regexp.new("[[:cntrl:]]".force_encoding('utf-8'), opts) # unicode whitespaces, like 160 codepoint
+  Control = Regexp.new("[[:cntrl:]]".force_encoding('utf-8'), REGEXP_OPTS) # unicode whitespaces, like 160 codepoint
 
   # From:
   # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
-  White_Space = Regexp.new("[[:space:]]".force_encoding('utf-8'), opts)
+  White_Space = Regexp.new("[[:space:]]".force_encoding('utf-8'), REGEXP_OPTS)
 
   ENCODING_OPTIONS_CLEAN_UTF8 = {
     :invalid           => :replace, # Replace invalid byte sequences
@@ -55,9 +57,6 @@ class Escape_Escape_Escape
     :newline           => :universal,
     :universal_newline => true # Always break lines with \n, not \r\n
   }
-
-
-  opts = Regexp::FIXEDENCODING | Regexp::IGNORECASE
 
   CONFIG                  = {
     :attributes    => Sanitize::Config::RELAXED[:attributes].dup,
@@ -135,9 +134,8 @@ class Escape_Escape_Escape
   }
 
   def new_regexp str
-    Regexp.new(clean_utf8(str), Regexp::FIXEDENCODING | Regexp::IGNORECASE)
+    Regexp.new(clean_utf8(str), REGEXP_OPTS)
   end
-
 
   class << self # ======================================================
 
