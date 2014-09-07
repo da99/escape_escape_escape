@@ -22,12 +22,18 @@ class Escape_Escape_Escape
   Underscore_URI_KEY = /_(uri|url|href)$/
   URI_KEY            = /^(uri|url|href)$/
 
-  REPEATING_DOTS          = /\.{1,}\//
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
+
   UN_PRINT_ABLE           = /[^[:print:]\n]/
+
   CR                      = "\r"
+
   TABS                    = "\t"
+
+  REPEATING_DOTS = /\.{1,}/
+
   CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]*/  # Don't use "\x20" because that is the space character.
+
   WHITE_SPACE             = /[[:space:]]&&[^\n]/            # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
 
   NL             = "\n";
@@ -35,24 +41,23 @@ class Escape_Escape_Escape
   VALID_HTML_ID  = /^[0-9a-z_]+$/i;
   VALID_HTML_TAG = /^[0-9a-z_]+$/i;
 
-  ENCODING_OPTIONS_CLEAN_UTF8 = {
-    invalid:           :replace,    # Replace invalid byte sequences
-    undef:              :replace,   # Replace anything not defined in ASCII
-    replace:            '',         # Use a blank for those replacements
-    newline:            :universal,
-    universal_newline:  true        # Always break lines with \n, not \r\n
-  }
-
-  opts = Regexp::FIXEDENCODING | Regexp::IGNORECASE
-
   # tabs, etc.
   Control = Regexp.new("[[:cntrl:]]".force_encoding('utf-8'), opts) # unicode whitespaces, like 160 codepoint
+
   # From:
   # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
   White_Space = Regexp.new("[[:space:]]".force_encoding('utf-8'), opts)
 
-  REPEATING_DOTS = /\.{1,}/
-  INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
+  ENCODING_OPTIONS_CLEAN_UTF8 = {
+    :invalid           => :replace, # Replace invalid byte sequences
+    :undef             => :replace, # Replace anything not defined in ASCII
+    :replace           => '', # Use a blank for those replacements
+    :newline           => :universal,
+    :universal_newline => true # Always break lines with \n, not \r\n
+  }
+
+
+  opts = Regexp::FIXEDENCODING | Regexp::IGNORECASE
 
   CONFIG                  = {
     :attributes    => Sanitize::Config::RELAXED[:attributes].dup,
@@ -73,14 +78,6 @@ class Escape_Escape_Escape
         "src"=>["http", "https", :relative]
       }
     }
-  }
-
-  ENCODING_OPTIONS_CLEAN_UTF8 = {
-    :invalid           => :replace, # Replace invalid byte sequences
-    :undef             => :replace, # Replace anything not defined in ASCII
-    :replace           => '' # Use a blank for those replacements
-    # :newline         => :universal
-    # :universal_newline => true # Always break lines with \n, not \r\n
   }
 
   # HTML_ESCAPE_TABLE is used after text is escaped to
