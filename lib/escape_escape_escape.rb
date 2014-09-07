@@ -5,11 +5,9 @@ require "htmlentities"
 
 # === Important Gems ===
 require 'cgi' # Don't use URI.escape because it does not escape all invalid characters.
-require 'htmlentities'
 require 'loofah'
 require "addressable/uri"
 require "escape_utils"
-require "htmlentities"
 require "uri"
 # ======================
 
@@ -29,11 +27,11 @@ class Escape_Escape_Escape
   UN_PRINT_ABLE           = /[^[:print:]\n]/
   CR                      = "\r"
   TABS                    = "\t"
-  CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]/  # Don't use "\x20" because that is the space character.
+  CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]*/  # Don't use "\x20" because that is the space character.
   WHITE_SPACE             = /[[:space:]]&&[^\n]/            # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
 
   NL             = "\n";
-  SPACES         = /\ +/g;
+  SPACES         = /\ +/;
   VALID_HTML_ID  = /^[0-9a-z_]+$/i;
   VALID_HTML_TAG = /^[0-9a-z_]+$/i;
 
@@ -292,6 +290,7 @@ class Escape_Escape_Escape
       normalized_encoded_text = escape( plaintext(raw_text).strip, :named )
 
       sanitized_text = Loofah.scrub_fragment( normalized_encoded_text, :prune ).to_s
+      sanitized_text
     end # === def html
 
 
@@ -323,8 +322,7 @@ class Escape_Escape_Escape
       final_str = raw_str.
         split("\n").
         map { |line|
-          # Don't use "\x20" because that is the space character.
-          line.chars.normalize.gsub( /[[:cntrl:]\x00-\x1f]*/, '' )
+          line.chars.normalize.gsub( CONTROLS_CHARS, '' )
         }.
         join("\n")
 
@@ -378,7 +376,7 @@ class Escape_Escape_Escape
       if key && key.to_s['pass_']
         o
       elsif is_uri_key(key)
-        clean = e_uri(_e(o))
+        e_uri(_e(o))
       else
         Coder.encode(un_e(o), :named, :hexadecimal)
       end
