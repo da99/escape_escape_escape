@@ -21,6 +21,9 @@ class Escape_Escape_Escape
 
   CODER = HTMLEntities.new(:xhtml1)
 
+  Underscore_URI_KEY = /_(uri|url|href)$/
+  URI_KEY            = /^(uri|url|href)$/
+
   REPEATING_DOTS          = /\.{1,}\//
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
   UN_PRINT_ABLE           = /[^[:print:]\n]/
@@ -35,11 +38,11 @@ class Escape_Escape_Escape
   VALID_HTML_TAG = /^[0-9a-z_]+$/i;
 
   ENCODING_OPTIONS_CLEAN_UTF8 = {
-    :invalid => :replace, # Replace invalid byte sequences
-    :undef => :replace, # Replace anything not defined in ASCII
-    :replace => '' # Use a blank for those replacements
-    # :newline => :universal
-    # :universal_newline => true # Always break lines with \n, not \r\n
+    invalid:           :replace,    # Replace invalid byte sequences
+    undef:              :replace,   # Replace anything not defined in ASCII
+    replace:            '',         # Use a blank for those replacements
+    newline:            :universal,
+    universal_newline:  true        # Always break lines with \n, not \r\n
   }
 
   opts = Regexp::FIXEDENCODING | Regexp::IGNORECASE
@@ -160,8 +163,9 @@ class Escape_Escape_Escape
         gsub(CONTROL_CHARS            , "\n" ).
         gsub(WHITE_SPACE              , " ").
         encode(Encoding.find('utf-8'), ENCODING_OPTIONS_CLEAN_UTF8).
-        gsub(self::Control, "\n").
-        gsub(self::White_Space, " ")
+        encode(Encoding.find('utf-8'), ENCODING_OPTIONS_CLEAN_UTF8).
+        gsub(Control, "\n").
+        gsub(White_Space, " ")
     end
 
     def text s
@@ -347,6 +351,62 @@ class Escape_Escape_Escape
          m.gsub( kv.first, kv.last)
       end
     end
+
+    def un_e raw
+      EscapeUtils.unescape_html clean_utf8(raw)
+    end
+
+    def e_uri str
+      uri = Addressable::URI.parse(str)
+      if ["http","https","ftp"].include?(uri.scheme) || uri.path.index('/') == 0
+        str
+      else
+        nil
+      end
+    rescue Addressable::URI::InvalidURIError
+      nil
+    end
+
+    def is_uri_key raw_key
+      return false unless raw_key
+      k = raw_key.to_s.strip.downcase
+      k && (k[Underscore_URI_KEY] || k[URI_KEY])
+    end
+
+    def _e o, key = nil
+      # EscapeUtils.escape_html(un_e o)
+      if key && key.to_s['pass_']
+        o
+      elsif is_uri_key(key)
+        clean = e_uri(_e(o))
+      else
+        Coder.encode(un_e(o), :named, :hexadecimal)
+      end
+    end
+
+    def escape o, key = nil
+      return(o.map { |v| Escape_All.escape(v) }) if o.kind_of? Array
+
+      if o.kind_of? Hash
+        new_o = {}
+
+        o.each { |k, v| new_o[Escape_All.escape(k)] = Escape_All.escape(v, k) }
+
+        return new_o
+      end
+
+      return Escape_All._e(o, key) if o.is_a?(String)
+
+      if o.is_a?(Symbol)
+        return Escape_All._e(o.to_s).to_sym
+      end
+
+      if o == true || o == false || o.kind_of?(Numeric)
+        return o
+      end
+
+      raise "Unknown type: #{o.class}"
+    end # === def
 
 
 
