@@ -167,10 +167,6 @@ class Escape_Escape_Escape
       clean_utf8 s
     end
 
-    def html s
-      Sanitize.fragment( clean_utf8(s), CONFIG )
-    end
-
     def un_escape raw
       EscapeUtils.unescape_html clean_utf8(raw)
     end
@@ -185,15 +181,6 @@ class Escape_Escape_Escape
     rescue Addressable::URI::InvalidURIError
       fail "Invalid: address: #{str.inspect}"
     end
-
-    def escape o
-      case o
-      when String
-        Coder.encode(un_escape(o), :named, :hexadecimal)
-      else
-        fail "Unknown type: #{o.inspect}"
-      end
-    end # === def
 
     def unescape_inner_html s
       CODER.decode(clean_utf8(s))
@@ -267,7 +254,6 @@ class Escape_Escape_Escape
       raw_tag.strip.downcase.gsub(/^[\,\.]{1,}|[\"]{1,}|[\,\.]{1,}$/, '').gsub(/\ /, '-')
     end
 
-
     # ===============================================
     # A better alternative than "Rack::Utils.escape_html". Escapes
     # various characters (including '&', '<', '>', and both quotation mark types)
@@ -287,7 +273,7 @@ class Escape_Escape_Escape
       normalized_encoded_text = escape( plaintext(raw_text).strip, :named )
 
       sanitized_text = Loofah.scrub_fragment( normalized_encoded_text, :prune ).to_s
-      sanitized_text
+      Sanitize.fragment( clean_utf8(sanitized_text), CONFIG )
     end # === def html
 
 
@@ -390,7 +376,10 @@ class Escape_Escape_Escape
         return new_o
       end
 
-      return Escape_All._e(o, key) if o.is_a?(String)
+      if o.is_a?(String)
+        o = Coder.encode(un_escape(o), :named, :hexadecimal)
+        return Escape_All._e(o, key)
+      end
 
       if o.is_a?(Symbol)
         return Escape_All._e(o.to_s).to_sym
