@@ -13,7 +13,6 @@ require 'escape_utils/url/erb' # to patch ERB::Util
 require 'escape_utils/url/rack' # to patch Rack::Utils
 require 'escape_utils/url/uri' # to patch URI
 
-
 # ======================
 #
 # ======================
@@ -29,7 +28,13 @@ end
 
 class Escape_Escape_Escape
 
+  INVALID            = Class.new(RuntimeError)
+  Unknown_Type       = Class.new(RuntimeError)
+
+  TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
+
   Underscore_URI_KEY = /_(uri|url|href)$/
+
   URI_KEY            = /^(uri|url|href)$/
 
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
@@ -113,16 +118,32 @@ class Escape_Escape_Escape
         }.join(NL)
     end
 
+    def path raw
+      href raw
+    end
+
     # ===============================================
     # :href
+    # Inspired from:
+    #   http://stackoverflow.com/a/13041565
     # ===============================================
+    def href raw_str
+      str = clean_utf8(raw_str)
+      begin
+        uri = URI.parse(str)
+        return nil if uri.scheme.downcase['javascript'.freeze]
+        return nil if !uri.host && !uri.relative?
+        return str unless uri.relative?
 
-    def href str
-      uri = Addressable::URI.parse(str)
-      return '' if uri.scheme.to_s.strip.downcase['javascript'.freeze]
-      EscapeUtils.escape_html uri.normalize.to_s
-    rescue Addressable::URI::InvalidURIError
-      ''
+        str.split('/').map { |crumb|
+          crumb.
+            gsub(REPEATING_DOTS, '.').
+            gsub(INVALID_FILE_NAME_CHARS, '-').
+            to_s
+        }.join( '/' )
+      rescue URI::InvalidURIError
+        nil
+      end
     end
 
     # ===============================================
@@ -132,40 +153,14 @@ class Escape_Escape_Escape
       TZInfo::Timezone.get( timezone.to_s.strip ).identifier
     end
 
-    # =========================================================
-    # Takes out any periods and back slashes in a String.
-    # Single periods surround text are allowed on the last substring
-    # past the last slash because they are assumed to be filenames
-    # with extensions.
-    # =========================================================
-    def path( raw_path )
-      clean_utf8(raw_path).split('/').map { |crumb|
-
-        crumb.
-          gsub(REPEATING_DOTS, '.').
-          gsub(INVALID_FILE_NAME_CHARS, '-').
-          to_s
-
-      }.join( *clean_crumbs )
-    end
-
-    # ===============================================
-    # This method is not meant to be called directly. Instead, call
-    # <Wash.parse_tags>.
-    # Returns: String with
-    # * all spaces and underscores turned into dashes.
-    # * all non-alphanumeric characters, underscores, dashes, and periods
-    # turned into dashes.
-    # * non-alphanumeric characters at the beginning and end stripped out.
-    # ===============================================
-    def tag( raw_tag )
-      # raw_tag.strip.downcase.gsub( /[^a-z0-9\.]{1,}/,'-').gsub(/^[^a-z0-9]{1,}|[^a-z0-9]{1,}$/i, '').gsub(/\.{1,}/, '.')
-      raw_tag.strip.downcase.gsub(/^[\,\.]{1,}|[\"]{1,}|[\,\.]{1,}$/, '').gsub(/\ /, '-')
-    end
-
     # ===============================================
     # HTML
     # ===============================================
+
+    def tag( raw_tag )
+      return nil unless raw_tag[TAG_PATTERN]
+      raw_tag
+    end
 
     def decode_html raw
       EscapeUtils.unescape_html clean_utf8(raw)
@@ -226,31 +221,27 @@ class Escape_Escape_Escape
       final_str
     end #  === def plaintext
 
-    def escape o, key = nil
-      return(o.map { |v| escape(v) }) if o.kind_of? Array
-
+    def escape o, method_name = :html
       if o.kind_of? Hash
-        new_o = {}
-
-        o.each { |k, v| new_o[escape(k)] = escape(v, k) }
-
-        return new_o
-      end
-
-      if o.is_a?(String)
-        o = html(decode_html(o))
-        return _e(o, key)
+        return(
+          o.inject({}) { |memo, (k, v)|
+            memo[escape(k,method_name)] = escape(v, method_name)
+            memo
+          }
+        )
       end
 
       if o.is_a?(Symbol)
-        return _e(o.to_s).to_sym
+        result = send(method_name, o.to_s)
+        return(result.to_sym) if result.is_a?(String)
+        fail Invalid, "#{o} can't be escaped/sanitized."
       end
 
-      if o == true || o == false || o.kind_of?(Numeric)
-        return o
-      end
+      return(o.map { |v| escape(v, method_name) }) if o.kind_of? Array
+      return send(method_name, o) if o.is_a?(String)
+      return o if o == true || o == false || o.kind_of?(Numeric)
 
-      raise "Unknown type: #{o.class}"
+      fail Unknown_Type, o.inspect
     end # === def
 
   end # === class self ===
