@@ -104,6 +104,11 @@ class Escape_Escape_Escape
       Regexp.new(clean_utf8(str), REGEXP_OPTS)
     end
 
+    # ==================================================================
+    # * normalized to :KC
+    # * "\r\n" changed to "\n"
+    # * all control characters stripped except for "\n"
+    # and end.
     # Normalization, then strip:
     #   http://msdn.microsoft.com/en-us/library/dd374126(v=vs.85).aspx
     #   http://www.unicode.org/faq/normalization.html
@@ -115,6 +120,10 @@ class Escape_Escape_Escape
     # [160, 160,64, 116, 119, 101, 108, 108, 121, 109, 101, 160, 102, 105, 108, 109].
     # inject('', :<<)
     #
+    # Options:
+    #
+    #   :tabs
+    #   :spaces
     #
     def clean_utf8 raw_s, *opts
 
@@ -127,7 +136,7 @@ class Escape_Escape_Escape
       # === Save tabs if requested.
       raw_s = raw_s.gsub(TAB, HTML_TAB) if opts.include?(:tabs)
 
-      raw_s.
+      clean = raw_s.
         encode(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8).
         scrub.
         to_nfkc.
@@ -135,6 +144,18 @@ class Escape_Escape_Escape
         gsub(TAB                           , TWO_SPACES).
         gsub(MULTI_CONTROL_AND_UNPRINTABLE , BLANK).
         gsub(WHITE_SPACE                   , SPACE)
+
+      # Save whitespace or strip.
+      if !opts.include?(:spaces)
+        clean = clean.strip
+      end
+
+      # Put back tabs by request.
+      if opts.include?(:tabs)
+        clean = clean.gsub(HTML_TAB, TAB)
+      end
+
+      clean
     end
 
     def path raw
@@ -197,35 +218,6 @@ class Escape_Escape_Escape
     def html( raw_text )
       EscapeUtils.escape_html(decode_html(raw_text))
     end # === def html
-
-
-    # ===============================================
-    # Returns: A string that is:
-    # * normalized to :KC
-    # * "\r\n" changed to "\n"
-    # * all control characters stripped except for "\n"
-    # and end.
-    # Options:
-    # :tabs
-    # :spaces
-    #
-    # ===============================================
-    def plaintext( raw_str, *opts)
-
-
-
-      # Save whitespace or strip.
-      if !opts.include?(:spaces)
-        final_str = final_str.strip
-      end
-
-      # Put back tabs by request.
-      if opts.include?(:tabs)
-        final_str = final_str.gsub(HTML_TAB, TAB)
-      end
-
-      final_str
-    end #  === def plaintext
 
     def escape o, method_name = :html
       if o.kind_of? Hash
