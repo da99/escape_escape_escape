@@ -13,38 +13,89 @@ BRACKET = " < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060
 &#X003C &#X0003C &#X00003C &#X000003C &#X3C; &#X03C; &#X003C; &#X0003C;
 &#X00003C; &#X000003C; \x3c \x3C \u003c \u003C ".strip
 
-Dir.glob("specs/as_json/*.json").sort.each { |f|
-  contents = MultiJson.load(File.read f)
-  method_name = File.basename(f).gsub(/\A\d+-|\.json\Z/, '')
-  it_name = t['it'][/:\z/] ? "#{t['it']}#{t['input'}" : t['it']
-  describe ":#{method_name}" do
-    contents.each { |t|
-      it it_name do
-        i      = t["input"]
-        o      = t["output"]
-        actual = Escape_Escape_Escape.send(method_name, i)
+class It_Dsl
+  class << self
 
-        case o
-        when String
-          actual.should == o
+    def tests
+      @tests ||= []
+    end
+
+    def args
+      @args ||= []
+    end
+
+    def describe str
+      tests << {:describe => str, :tests=>[]}
+    end
+
+    def it str
+      @args << str
+    end
+
+    def input o
+      @args << o
+    end
+
+    def output o
+      i = args.pop
+      name = args.pop
+      test = {it: name, input: i, output: o}
+
+      test[:it] = if test[:it].strip[/:\z/]
+                    "#{test[:it]} #{test[:input]}"
+                  else
+                    test[:it]
+                  end
+
+      tests.last[:tests] << test
+    end
+
+  end # === class << self
+end # == class It_Dsl
+
+Dir.glob("specs/as_ruby/*.rb").sort.each { |f|
+
+  contents    = File.read f
+  method_name = File.basename(f).gsub(/\A\d+-|\.rb\z/, '')
+
+  It_Dsl.describe method_name.to_sym
+  It_Dsl.instance_eval contents, f
+
+} # === Dir.glob
+
+
+It_Dsl.tests.each { |o|
+
+  describe o[:describe] do
+    o[:tests].each { |t|
+      it t[:it] do
+        input  = t[:input]
+        output = t[:output]
+        actual = Escape_Escape_Escape.send(o[:describe], input)
+
+        case output
         when Array
-          target = o.pop
+          target = output.pop
           begin
-            if o[1].is_a?(Array)
-              meth = o.shift
-              args = o.shift
-              actual = actual.send(meth, *args)
+            if output[1].is_a?(Array)
+              meth = output.shift
+              args = output.shift
+              actual = actual.send(o[:describe], *args)
             else
-              fail "Unknown method: #{o[0].inspect}"
+              fail "Unknown method: #{output[0].inspect}"
             end
-          end while !o.empty?
+          end while !output.empty?
 
           actual.should == target
+
+        else
+          actual.should == output
+
         end # === case
       end # === it
     }
   end
-}
+} # === It_Dsl
 
 
 
