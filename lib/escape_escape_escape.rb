@@ -50,8 +50,6 @@ class Escape_Escape_Escape
 
   REPEATING_DOTS = /\.{1,}/
 
-  REGEXP_OPTS = Regexp::FIXEDENCODING | Regexp::IGNORECASE
-
   # === MULTI_CONTROL_CHARS: ==================================
   #
   # Unicode whitespaces, like 160 codepoint, tabs, etc.
@@ -98,7 +96,8 @@ class Escape_Escape_Escape
   class << self # ======================================================
 
     def regexp str
-      Regexp.new(clean_utf8(str), REGEXP_OPTS)
+      @regexp_opts ||= Regexp::FIXEDENCODING | Regexp::IGNORECASE
+      Regexp.new(clean_utf8(str), @regexp_opts)
     end
 
     # ===============================================
