@@ -12,14 +12,16 @@ require 'escape_utils/url/rack' # to patch Rack::Utils
 require 'escape_utils/url/uri' # to patch URI
 
 
+# ======================
 require "sanitize"
 require "htmlentities"
-
-# === Important Gems ===
-require 'cgi' # Don't use URI.escape because it does not escape all invalid characters.
 require 'loofah'
-require "addressable/uri"
+#
+# ======================
+#
 require "uri"
+require 'cgi' # Don't use URI.escape because it does not escape all invalid characters.
+require "addressable/uri"
 # ======================
 
 def Escape_Escape_Escape s
