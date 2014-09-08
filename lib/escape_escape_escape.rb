@@ -33,10 +33,6 @@ class Escape_Escape_Escape
 
   TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
 
-  Underscore_URI_KEY = /_(uri|url|href)$/
-
-  URI_KEY            = /^(uri|url|href)$/
-
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
 
   TABS           = /\t*/
@@ -48,8 +44,9 @@ class Escape_Escape_Escape
 
   NL             = "\n";
   SPACES         = /\ +/;
-  VALID_HTML_ID  = /^[0-9a-z_]+$/i;
-  VALID_HTML_TAG = /^[0-9a-z_]+$/i;
+
+  VALID_HTML_ID  = /\A[0-9a-z_]+\z/i;
+  VALID_HTML_TAG = /\A[0-9a-z_]+\z/i;
 
   REPEATING_DOTS = /\.{1,}/
 
