@@ -350,10 +350,17 @@ describe :other do
   end
 
   describe :html do
+
+    it 'has the same REGEX_UNSUITABLE_CHARS as Sanitize' do
+      Escape_Escape_Escape::REGEX_UNSUITABLE_CHARS.
+        should == Sanitize::REGEX_UNSUITABLE_CHARS 
+    end
+
     it 'removes Unicode characters that do not belong in html' do
       input = "\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a"
       E(input).should == ''
     end
+
   end
 
 end # === describe :other
