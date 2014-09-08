@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "sanitize"     , ">= 3.0"
-  spec.add_runtime_dependency "htmlentities" , ">= 4.3.2"
   spec.add_runtime_dependency "loofah" , "> 2.0.0"
   spec.add_runtime_dependency "addressable" , "> 2.3.5"
   spec.add_runtime_dependency "escape_utils" , "> 1.0.0"

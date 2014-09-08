@@ -16,7 +16,6 @@ require 'escape_utils/url/uri' # to patch URI
 
 # ======================
 require "sanitize"
-require "htmlentities"
 require 'loofah'
 #
 # ======================
@@ -31,8 +30,6 @@ def Escape_Escape_Escape s
 end
 
 class Escape_Escape_Escape
-
-  CODER = HTMLEntities.new(:xhtml1)
 
   Underscore_URI_KEY = /_(uri|url|href)$/
   URI_KEY            = /^(uri|url|href)$/
@@ -187,7 +184,7 @@ class Escape_Escape_Escape
     end
 
     def decode_html raw
-      CODER.decode clean_utf8(raw)
+      EscapeUtils.unescape_html clean_utf8(raw)
     end
 
     def uri str
@@ -199,14 +196,6 @@ class Escape_Escape_Escape
       end
     rescue Addressable::URI::InvalidURIError
       fail "Invalid: address: #{str.inspect}"
-    end
-
-    def unescape_inner_html s
-      CODER.decode(clean_utf8(s))
-    end
-
-    def inner_html s
-      CODER.encode(unescape_inner_html(s), :named, :hexadecimal)
     end
 
     def js_uri raw, name
@@ -283,10 +272,7 @@ class Escape_Escape_Escape
     # Therefore, all text is run through <plaintext> before encoding.
     # ===============================================
     def html( raw_text )
-
-      # Turn string into UTF8. (This also takes out control characters
-      # which is good or else they too will be escaped into HTML too.
-      CODER.encode(decode_html(raw_text), :named, :hexadecimal)
+      EscapeUtils.escape_html(decode_html(raw_text))
     end # === def html
 
 
@@ -363,7 +349,7 @@ class Escape_Escape_Escape
       elsif is_uri_key(key)
         e_uri(_e(o))
       else
-        CODER.encode(un_e(o), :named, :hexadecimal)
+        html(un_e(o))
       end
     end
 
@@ -379,7 +365,7 @@ class Escape_Escape_Escape
       end
 
       if o.is_a?(String)
-        o = CODER.encode(un_escape(o), :named, :hexadecimal)
+        o = html(decode_html(o))
         return _e(o, key)
       end
 

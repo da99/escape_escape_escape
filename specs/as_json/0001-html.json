@@ -4,7 +4,7 @@
   {
     "it" : "does not re-escape already escaped html",
     "input"  : "<p>Hello &amp; GoodBye</p>",
-    "output" : "&lt;p&gt;Hello &amp; GoodBye&lt;/p&gt;"
+    "output" : "&lt;p&gt;Hello &amp; GoodBye&lt;&#47;p&gt;"
   },
 
   {
