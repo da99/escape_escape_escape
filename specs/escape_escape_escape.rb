@@ -2,6 +2,16 @@
 require "multi_json"
 require "escape_escape_escape"
 
+BRACKET = " < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060
+&#00060 &#000060 &#0000060 &#60; &#060; &#0060; &#00060;
+&#000060; &#0000060; &#x3c &#x03c &#x003c &#x0003c &#x00003c
+&#x000003c &#x3c; &#x03c; &#x003c; &#x0003c; &#x00003c;
+&#x000003c; &#X3c &#X03c &#X003c &#X0003c &#X00003c &#X000003c
+&#X3c; &#X03c; &#X003c; &#X0003c; &#X00003c; &#X000003c;
+&#x3C &#x03C &#x003C &#x0003C &#x00003C &#x000003C &#x3C; &#x03C;
+&#x003C; &#x0003C; &#x00003C; &#x000003C; &#X3C &#X03C
+&#X003C &#X0003C &#X00003C &#X000003C &#X3C; &#X03C; &#X003C; &#X0003C;
+&#X00003C; &#X000003C; \x3c \x3C \u003c \u003C ".strip
 
 Dir.glob("specs/as_json/*.json").sort.each { |f|
   contents = MultiJson.load(File.read f)
@@ -53,16 +63,6 @@ describe ":clean_utf8" do
 
 end # === describe :clean_utf8 ===
 
-BRACKET = " < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060
-&#00060 &#000060 &#0000060 &#60; &#060; &#0060; &#00060;
-&#000060; &#0000060; &#x3c &#x03c &#x003c &#x0003c &#x00003c
-&#x000003c &#x3c; &#x03c; &#x003c; &#x0003c; &#x00003c;
-&#x000003c; &#X3c &#X03c &#X003c &#X0003c &#X00003c &#X000003c
-&#X3c; &#X03c; &#X003c; &#X0003c; &#X00003c; &#X000003c;
-&#x3C &#x03C &#x003C &#x0003C &#x00003C &#x000003C &#x3C; &#x03C;
-&#x003C; &#x0003C; &#x00003C; &#x000003C; &#X3C &#X03C
-&#X003C &#X0003C &#X00003C &#X000003C &#X3C; &#X03C; &#X003C; &#X0003C;
-&#X00003C; &#X000003C; \x3c \x3C \u003c \u003C ".strip
 
 
 describe ':un_e' do
@@ -225,68 +225,64 @@ describe( 'uri' ) {
 
 
 
-BRACKET = " < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060  
-&#00060 &#000060 &#0000060 &#60; &#060; &#0060; &#00060;  
-&#000060; &#0000060; &#x3c &#x03c &#x003c &#x0003c &#x00003c  
-&#x000003c &#x3c; &#x03c; &#x003c; &#x0003c; &#x00003c;  
-&#x000003c; &#X3c &#X03c &#X003c &#X0003c &#X00003c &#X000003c  
-&#X3c; &#X03c; &#X003c; &#X0003c; &#X00003c; &#X000003c;  
-&#x3C &#x03C &#x003C &#x0003C &#x00003C &#x000003C &#x3C; &#x03C;  
-&#x003C; &#x0003C; &#x00003C; &#x000003C; &#X3C &#X03C  
-&#X003C &#X0003C &#X00003C &#X000003C &#X3C; &#X03C; &#X003C; &#X0003C;  
-&#X00003C; &#X000003C; \x3c \x3C \u003c \u003C ";
-
-
 describe( 'Sanitize') {
 
   it( 'un-escapes escaped text mixed with HTML') {
-    s = "<p>Hi&amp;</p>";
-    assert.equal(U(s), "<p>Hi&</p>");
+    s = "<p>Hi&amp;</p>"
+    assert.equal(U(s), "<p>Hi&</p>")
   }
 
   it( 'does not re-escape already escaped text mixed with HTML') {
-    h = "<p>Hi</p>";
-    e = _s.escapeHTML(h);
-    o = e + h;
-    assert.equal(E(o), _s.escapeHTML(h + h));
+    h = "<p>Hi</p>"
+    e = _s.escapeHTML(h)
+    o = e + h
+    assert.equal(E(o), _s.escapeHTML(h + h))
   }
 
   it( 'escapes special chars: "Hello ©®∆"') {
-    s = "Hello & World ©®∆";
-    t = "Hello &amp; World &#169;&#174;&#8710;";
-    assert.equal(E(s), t);
+    s = "Hello & World ©®∆"
+    t = "Hello &amp; World &#169;&#174;&#8710;"
+    assert.equal(E(s), t)
   }
 
   it( 'un-escapes special chars: "Hello ©®∆"') {
-    s = "Hello &amp; World &#169;&#174;&#8710;";
-    t = "Hello & World ©®∆";
-    assert.equal(U(s), t);
+    s = "Hello &amp; World &#169;&#174;&#8710;"
+    t = "Hello & World ©®∆"
+    assert.equal(U(s), t)
   }
 
   it( 'escapes all 70 different combos of "<"') {
-    assert.equal(_.uniq(E(BRACKET.trim()).split(/\s+/)).join(' '), "&lt; %3C");
+    assert.equal(_.uniq(E(BRACKET.trim()).split(/\s+/)).join(' '), "&lt; %3C")
   }
 
   it( 'un-escapes all 70 different combos of "<"') {
-    assert.equal(_.uniq(U(BRACKET.trim()).split(/\s+/)).join(' '), "< %3C");
+    assert.equal(_.uniq(U(BRACKET.trim()).split(/\s+/)).join(' '), "< %3C")
   }
 
   it( 'escapes all keys in nested objects') {
-    HTML = "<b>test</b>";
-    assert.deepEqual(E({" a >":{" a >": HTML}}), {" a &gt;": {" a &gt;": _s.escapeHTML(HTML)}});
+    HTML = "<b>test</b>"
+    input = {
+      " a >" => {" a >"=> HTML}
+    }
+    output = {
+      " a &gt;" => {
+        " a &gt;" => string.escapeHTML(HTML)
+      }
+    }
+    E(input).should == output
   }
 
   it( 'escapes all values in nested objects') {
-    HTML = "<b>test</b>";
-    assert.deepEqual(E({name:{name: HTML}}), {name: {name: _s.escapeHTML(HTML)}});
+    HTML = "<b>test</b>"
+    E({name:{name: HTML}}).should == {name: {name: _s.escapeHTML(HTML)}}
   }
 
   it( 'escapes all values in nested arrays') {
-    HTML = "<b>test</b>";
-    assert.deepEqual(E([{name:{name: HTML}}]), [{name: {name: _s.escapeHTML(HTML)}}]);
+    HTML = "<b>test</b>"
+    assert.deepEqual(E([{name:{name: HTML}}]), [{name: {name: _s.escapeHTML(HTML)}}])
   }
 
-} // === end desc
+} # // === end desc
 
 
 
