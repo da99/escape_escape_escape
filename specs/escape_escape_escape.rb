@@ -223,6 +223,13 @@ describe( 'uri' ) {
 
 } # === end desc
 
+describe :plaintext do
+
+  it "normalizes string" do
+    Escape_Escape_Escape.plaintext("\u2167").should == "VIII"
+  end
+
+end # === describe :plaintext
 
 describe( 'Sanitize') {
 

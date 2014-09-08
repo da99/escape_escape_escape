@@ -46,12 +46,14 @@ class Escape_Escape_Escape
   TABS                    = /\t*/
   TAB                     = "\t"
   HTML_TAB                = "&#09;"
+  TWO_SPACES              = '  '
+  BLANK                   = ''
+  SPACE                   = ' '
 
   REPEATING_DOTS = /\.{1,}/
 
-  CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]*/  # Don't use "\x20" because that is the space character.
+  CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]+/  # Don't use "\x20" because that is the space character.
 
-  WHITE_SPACE             = /[[:space:]]&&[^\n]/            # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
 
   NL             = "\n";
   SPACES         = /\ +/;
@@ -65,14 +67,15 @@ class Escape_Escape_Escape
 
   # From:
   # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
-  White_Space = Regexp.new("[[:space:]]".force_encoding('utf-8'), REGEXP_OPTS)
+  WHITE_SPACE = Regexp.new("[[:space:]]&&[^\n]".force_encoding('utf-8'), REGEXP_OPTS)
 
   ENCODING_OPTIONS_CLEAN_UTF8 = {
     :invalid           => :replace, # Replace invalid byte sequences
     :undef             => :replace, # Replace anything not defined in ASCII
-    :replace           => '', # Use a blank for those replacements
-    :newline           => :universal,
-    :universal_newline => true # Always break lines with \n, not \r\n
+    :replace           => '' # Use a blank for those replacements
+    # :universal_newline => true # Always break lines with \n, not \r\n
+    #   -- this is not working with :replace, so it has to be done manually
+    #      with .gsub
   }
 
   CONFIG                  = {
@@ -167,15 +170,12 @@ class Escape_Escape_Escape
     def clean_utf8 s
       s.
         encode(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8).
-        gsub(TAB                      , "  ").
-        gsub(CR                       , "").
-        gsub(UN_PRINT_ABLE            , '').
-        gsub(CONTROL_CHARS            , "\n" ).
-        gsub(WHITE_SPACE              , " ").
-        encode(Encoding.find('utf-8'), ENCODING_OPTIONS_CLEAN_UTF8).
-        encode(Encoding.find('utf-8'), ENCODING_OPTIONS_CLEAN_UTF8).
-        gsub(Control, "\n").
-        gsub(White_Space, " ")
+        gsub(TAB                      , TWO_SPACES).
+        gsub(CR                       , BLANK).
+        gsub(UN_PRINT_ABLE            , BLANK).
+        gsub(CONTROL_CHARS            , NL ).
+        gsub(WHITE_SPACE              , SPACE).
+        gsub(Control, NL)
     end
 
     def text s
@@ -317,6 +317,7 @@ class Escape_Escape_Escape
       # Second: Strip out control characters.
       # Note: Must be normalized first, then strip.
       # See: http://msdn.microsoft.com/en-us/library/dd374126(v=vs.85).aspx
+      # See: http://www.unicode.org/faq/normalization.html
       final_str = begin
                     raw_str.
                       split(NL).
@@ -379,7 +380,7 @@ class Escape_Escape_Escape
       elsif is_uri_key(key)
         e_uri(_e(o))
       else
-        Coder.encode(un_e(o), :named, :hexadecimal)
+        CODER.encode(un_e(o), :named, :hexadecimal)
       end
     end
 
