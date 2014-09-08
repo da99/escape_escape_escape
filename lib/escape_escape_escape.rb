@@ -84,11 +84,11 @@ class Escape_Escape_Escape
     }
   }
 
-  def new_regexp str
-    Regexp.new(clean_utf8(str), REGEXP_OPTS)
-  end
-
   class << self # ======================================================
+
+    def regexp str
+      Regexp.new(clean_utf8(str), REGEXP_OPTS)
+    end
 
     # From:
     # http://stackoverflow.com/questions/1268289/how-to-get-rid-of-non-ascii-characters-in-ruby
@@ -113,47 +113,16 @@ class Escape_Escape_Escape
         }.join(NL)
     end
 
-    def decode_html raw
-      EscapeUtils.unescape_html clean_utf8(raw)
-    end
+    # ===============================================
+    # :href
+    # ===============================================
 
-    def e_uri str
+    def href str
       uri = Addressable::URI.parse(str)
-      if ["http","https","ftp"].include?(uri.scheme) || uri.path.index('/') == 0
-        str
-      else
-        nil
-      end
+      return '' if uri.scheme.to_s.strip.downcase['javascript'.freeze]
+      EscapeUtils.escape_html uri.normalize.to_s
     rescue Addressable::URI::InvalidURIError
-      nil
-    end
-
-    def uri str
-      uri = Addressable::URI.parse(str)
-      if ["http","https","ftp"].include?(uri.scheme) || uri.path.index('/') == 0
-        str
-      else
-        nil
-      end
-    rescue Addressable::URI::InvalidURIError
-      fail "Invalid: address: #{str.inspect}"
-    end
-
-    def js_uri raw, name
-      name = (name) ? name : 'uri'
-
-      val = string(raw, name)
-      if (is_error(val))
-        return val
-      end
-
-      url   = HTML_E.decode(val, 2);
-      parse = URI_js.parse(url);
-      if (parse.errors.length)
-        return Error(name + ": " + parse.errors[0] + ': ' + val);
-      end
-
-      return URI_js.normalize(url);
+      ''
     end
 
     # ===============================================
@@ -201,6 +170,14 @@ class Escape_Escape_Escape
     def tag( raw_tag )
       # raw_tag.strip.downcase.gsub( /[^a-z0-9\.]{1,}/,'-').gsub(/^[^a-z0-9]{1,}|[^a-z0-9]{1,}$/i, '').gsub(/\.{1,}/, '.')
       raw_tag.strip.downcase.gsub(/^[\,\.]{1,}|[\"]{1,}|[\,\.]{1,}$/, '').gsub(/\ /, '-')
+    end
+
+    # ===============================================
+    # HTML
+    # ===============================================
+
+    def decode_html raw
+      EscapeUtils.unescape_html clean_utf8(raw)
     end
 
     # ===============================================
