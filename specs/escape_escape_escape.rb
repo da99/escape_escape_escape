@@ -292,6 +292,71 @@ describe( 'Sanitize') {
 
 
 
+describe :other do
+
+  it 'sanitizes :css :expression regardless of the case' do
+    input = "eXprEssioN(alert('xss!'));"
+    E(input).should == nil
+  end
+
+  it 'sanitizes :css :expression when ( or ) is an html entity: &#40; &#41;' do
+    input = "eXprEssioN&#40;alert('xss!')&#41;"
+    E(input).should == nil
+  end
+
+  it 'sanitizes :css :expression when ( is html entity regardless of car: &rPaR;' do
+    input = "eXprEssioN&rPaR;alert('xss!'))"
+    E(input).should == nil
+  end
+
+  it 'sanitizes css_href' do
+    input = "smtp://file.com/img.png"
+    E(input).should == nil
+  end
+
+  it 'sanitizes css_href event if slash is html entity: &#47;' do
+    input = "smtp:&#47;&#47;file.com/img.png"
+    E(input).should == nil
+  end
+
+  it 'sanitizes css_href event if slash is html entity: &#x0002F;' do
+    input = "smtp:&#x0002F;&#x0002F;file.com/img.png"
+    E(input).should == nil
+  end
+
+  it 'sanitizes css_href event if slash is html entity: &sol;' do
+    input = "smtp:&sol;&sol;file.com/img.png"
+    E(input).should == nil
+  end
+
+  it 'sanitizes css_href with encoded slashes' do
+    input = "smtp:&#047;&#047;file.com&#047;img.png"
+    E(input).should == nil
+  end
+
+  it 'sanitizes javascript: href' do
+    input = 'jAvAscript://alert()'
+    E(input).should == nil
+  end
+
+  it 'sanitizes javascript: href with encoded colons' do
+    input = "javascript&#058;//alert()"
+    E(input).should == nil
+  end
+
+  it 'sanitizes javascript: href with encoded slashes' do
+    input = "javascript:&#047;&#047;alert()"
+    E(input).should == nil
+  end
+
+  describe :html do
+    it 'removes Unicode characters that do not belong in html' do
+      input = "\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a"
+      E(input).should == ''
+    end
+  end
+
+end # === describe :other
 
 
 
