@@ -2,10 +2,33 @@
 [
 
   {
-    "it" : "removes \"javascript:\" protocol in \"href\" attributes",
-    "input" : "<a href=\"javascript:alert()\">hello</a>",
-    "output" : "<a>hello</a>"
-  }
+    "it" : "returns nil if scheme is whitespace padded:",
+    "input": "javascript ://alert()",
+    "output": null
+  },
 
+  {
+    "it" : "returns nil if scheme is whitespace padded, slash encoded:",
+    "input": "javascript :&sOL;/alert()",
+    "output": null
+  },
+
+  {
+    "it" : "returns nil if colon encode:",
+    "input": "javascript&#058;//alert()",
+    "output": null
+  },
+
+  {
+    "it" : "returns nil if string is whitespace padded:",
+    "input": "   javascript://alert()  ",
+    "output" : null
+  },
+
+  {
+    "it" : "returns nil if string is whitespace padded, multi-case:",
+    "input": "   javaSCript ://alert()  ",
+    "output" : null
+  }
 
 ]

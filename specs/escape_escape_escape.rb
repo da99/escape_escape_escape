@@ -16,9 +16,10 @@ BRACKET = " < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060
 Dir.glob("specs/as_json/*.json").sort.each { |f|
   contents = MultiJson.load(File.read f)
   method_name = File.basename(f).gsub(/\A\d+-|\.json\Z/, '')
+  it_name = t['it'][/:\z/] ? "#{t['it']}#{t['input'}" : t['it']
   describe ":#{method_name}" do
     contents.each { |t|
-      it t["it"] do
+      it it_name do
         i      = t["input"]
         o      = t["output"]
         actual = Escape_Escape_Escape.send(method_name, i)
@@ -223,14 +224,6 @@ describe( 'uri' ) {
 
 } # === end desc
 
-describe :plaintext do
-
-  it "normalizes string" do
-    Escape_Escape_Escape.plaintext("\u2167").should == "VIII"
-  end
-
-end # === describe :plaintext
-
 describe( 'Sanitize') {
 
   it( 'un-escapes escaped text mixed with HTML') {
@@ -304,7 +297,7 @@ describe :other do
     E(input).should == nil
   end
 
-  it 'sanitizes :css :expression when ( is html entity regardless of car: &rPaR;' do
+  it 'sanitizes :css :expression when ( is html entity regardless of case: &rPaR;' do
     input = "eXprEssioN&rPaR;alert('xss!'))"
     E(input).should == nil
   end
