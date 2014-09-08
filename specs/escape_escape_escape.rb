@@ -381,6 +381,11 @@ describe :other do
       E(input).should == EscapeUtils.escape_html(input).downcase
     end
 
+    it 'replaces &sOL;, regardless of case w: #047;' do
+      input = "htTp:&sol;&sol;file.com/img.png"
+      E(input).should == EscapeUtils.escape_html("http://file.com/img.png")
+    end
+
   end # === :href
 
 end # === describe :other
