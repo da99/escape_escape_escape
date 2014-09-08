@@ -8,19 +8,23 @@ require "multi_json"
 Dir.glob("specs/as_json/*.json").sort.each { |f|
   puts ""
   new_file = f.sub('json', 'ruby').sub('json', 'rb')
-  fail("File already exists: #{new_file}") if File.exists?(new_file)
 
   puts new_file
+  content = ""
   MultiJson.load(File.read f).each { |test|
-   File.open(new_file, 'w') do |file|
-     file.write <<-EOF
+     content << <<-EOF
 it     #{test["it"].inspect}
 input  #{test['input'].inspect}
 output #{test['output'].inspect}
 
 EOF
-   end
   }
+  puts content
+
+  # fail("File already exists: #{new_file}") if File.exists?(new_file)
+  File.open(new_file, 'w') do |file|
+    file.write content
+  end
 }
 
 
