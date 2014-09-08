@@ -175,15 +175,19 @@ class Escape_Escape_Escape
         gsub(UN_PRINT_ABLE            , BLANK).
         gsub(CONTROL_CHARS            , NL ).
         gsub(WHITE_SPACE              , SPACE).
-        gsub(Control, NL)
+        gsub(Control, NL).split(NL).
+        map { |line|
+          UNF::Normalizer.normalize(line, :nfkc).
+            gsub( CONTROL_CHARS, '' )
+        }.join(NL)
     end
 
     def text s
       clean_utf8 s
     end
 
-    def un_escape raw
-      EscapeUtils.unescape_html clean_utf8(raw)
+    def decode_html raw
+      CODER.decode clean_utf8(raw)
     end
 
     def uri str
@@ -273,22 +277,16 @@ class Escape_Escape_Escape
     # A better alternative than "Rack::Utils.escape_html". Escapes
     # various characters (including '&', '<', '>', and both quotation mark types)
     # to HTML decimal entities. Also escapes the characters from
-    # SWISS::HTML_ESCAPE_TABLE.
+    # <HTML_ESCAPE_TABLE>.
     #
     # Text has to be UTF-8 before encoding, according to HTMLEntities gem.
-    # Therefore, all text is run through <Wash.plaintext> before encoding.
+    # Therefore, all text is run through <plaintext> before encoding.
     # ===============================================
     def html( raw_text )
 
       # Turn string into UTF8. (This also takes out control characters
       # which is good or else they too will be escaped into HTML too.
-      # Strip it after conversion.
-      # return Dryopteris.sanitize(utf8_text)
-      # Now encode it.
-      normalized_encoded_text = escape( plaintext(raw_text).strip, :named )
-
-      sanitized_text = Loofah.scrub_fragment( normalized_encoded_text, :prune ).to_s
-      Sanitize.fragment( clean_utf8(sanitized_text), CONFIG )
+      CODER.encode(decode_html(raw_text), :named, :hexadecimal)
     end # === def html
 
 
@@ -318,23 +316,12 @@ class Escape_Escape_Escape
       # Note: Must be normalized first, then strip.
       # See: http://msdn.microsoft.com/en-us/library/dd374126(v=vs.85).aspx
       # See: http://www.unicode.org/faq/normalization.html
-      final_str = begin
-                    raw_str.
-                      split(NL).
-                      map { |line|
-                        UNF::Normalizer.normalize(line, :nfkc).
-                          gsub( CONTROL_CHARS, '' )
-                      }.
-                      join(NL)
-                  end
+      final_str = clean_utf8(raw_str)
 
       # Save whitespace or strip.
       if !opts.include?(:spaces)
         final_str = final_str.strip
       end
-
-      # Normalize quotations and other characters through HTML entity encoding/decoding.
-      final_str = CODER.decode( CODER.encode(CODER.decode( final_str ), :named) )
 
       # Put back tabs by request.
       if opts.include?(:tabs)
@@ -342,7 +329,7 @@ class Escape_Escape_Escape
       end
 
       final_str
-    end # self.plaintext
+    end #  === def plaintext
 
     # Encode a few other symbols.
     # This also normalizes certain quotation and apostrophe HTML entities.
@@ -350,10 +337,6 @@ class Escape_Escape_Escape
       HTML_ESCAPE_TABLE.inject(s) do |m, kv|
          m.gsub( kv.first, kv.last)
       end
-    end
-
-    def un_e raw
-      EscapeUtils.unescape_html clean_utf8(raw)
     end
 
     def e_uri str
