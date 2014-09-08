@@ -6,6 +6,10 @@ it     "normalizes UNICODE: Ⅷ => VIII"
 input  "<p> Ⅷ </p>"
 output "&lt;p&gt; VIII &lt;&#47;p&gt;"
 
+it     "normalizes UNICODE: \u2167 => VIII"
+input  "<p> \u2167 </p>"
+output "&lt;p&gt; VIII &lt;&#47;p&gt;"
+
 it     "encodes apostrophe: ' -> &#39;"
 input  "Chars: ' '"
 output "Chars: &#39; &#39;"
