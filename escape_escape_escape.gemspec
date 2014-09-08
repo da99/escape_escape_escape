@@ -21,8 +21,6 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "sanitize"     , ">= 3.0"
-  spec.add_runtime_dependency "loofah" , "> 2.0.0"
   spec.add_runtime_dependency "addressable" , "> 2.3.5"
   spec.add_runtime_dependency "escape_utils" , "> 1.0.0"
   spec.add_runtime_dependency "unf" , "> 0.1.3"

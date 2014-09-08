@@ -15,8 +15,6 @@ require 'escape_utils/url/uri' # to patch URI
 
 
 # ======================
-require "sanitize"
-require 'loofah'
 #
 # ======================
 #
@@ -75,17 +73,7 @@ class Escape_Escape_Escape
     #      with .gsub
   }
 
-  CONFIG                  = {
-    :attributes    => Sanitize::Config::RELAXED[:attributes].dup,
-    :css           => Sanitize::Config::RELAXED[:css].dup,
-    :allow_doctype => true,
-    :elements => %w{
-      a blockquote br caption cite code div
-      img pre p span
-      h1 h2 h3 h4
-      i em strong sub sup
-      ol li ul
-    },
+  CONFIG = {
     :protocols => {
       "a"=>{
         "href"=>["ftp", "http", "https", "mailto", :relative]
