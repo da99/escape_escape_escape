@@ -84,60 +84,6 @@ class Escape_Escape_Escape
     }
   }
 
-  # HTML_ESCAPE_TABLE is used after text is escaped to
-  # further escape text more. This is why th semi-colon (&#59;) was left out
-  # from HTML_ESCAPE_TABLE. It would conflict with already escaped text.
-  # For more entities: http://www.w3.org/MarkUp/html3/latin1.html
-  # or go to: http://www.mountaindragon.com/html/iso.htm
-  HTML_ESCAPE_TABLE = {
-
-    '&laquo;' => "&lt;",
-    '&raquo;' => "&gt;",
-
-    "&lsquo;" => "&apos;",
-    "&rsquo;" => "&apos;",
-    "&sbquo;" => "&apos;",
-
-    "&lsquo;" => "&apos;",
-    "&rsquo;" => "&apos;",
-
-    "&ldquo;" => "&quot;",
-    "&rdquo;" => "&quot;",
-    "&bdquo;" => "&quot;",
-
-    "&lsaquo;" => "&lt;",
-    "&rsaquo;" => "&gt;",
-
-    "&acute;" => "&apos;",
-    "&uml;" => "&quot;",
-
-    '\\' => "&#92;",
-    '/' => "&#47;",
-    # '%' => "&#37;",
-    # ':' => '&#58;',
-    # '=' => '&#61;',
-    # '?' => '&#63;',
-    # '@' => '&#64;',
-    "\`" => '&apos;',
-    '‘' => "&apos;",
-    '’' => "&apos;",
-    '“' => '&quot;',
-    '”' => '&quot;',
-    # "$" => "&#36;",
-    # '#' => '&#35;', # Don't use this or else it will ruin all other entities.
-    # '&' => # Don't use this " " " " " "
-    # ';' => # Don't use this " " " " " "
-    '|' => '&brvbar;',
-    '~' => '&sim;'
-    # '!' => '&#33;',
-    # '*' => '&lowast;', # Don't use this. '*' is used by text formating, ie RedCloth, etc.
-    # '{' => '&#123;',
-    # '}' => '&#125;',
-    # '(' => '&#40;',
-    # ')' => '&#41;',
-    # "\n" => '<br />'
-  }
-
   def new_regexp str
     Regexp.new(clean_utf8(str), REGEXP_OPTS)
   end
@@ -167,12 +113,19 @@ class Escape_Escape_Escape
         }.join(NL)
     end
 
-    def text s
-      clean_utf8 s
-    end
-
     def decode_html raw
       EscapeUtils.unescape_html clean_utf8(raw)
+    end
+
+    def e_uri str
+      uri = Addressable::URI.parse(str)
+      if ["http","https","ftp"].include?(uri.scheme) || uri.path.index('/') == 0
+        str
+      else
+        nil
+      end
+    rescue Addressable::URI::InvalidURIError
+      nil
     end
 
     def uri str
@@ -305,42 +258,6 @@ class Escape_Escape_Escape
       final_str
     end #  === def plaintext
 
-    # Encode a few other symbols.
-    # This also normalizes certain quotation and apostrophe HTML entities.
-    def normalize_encoded_string s
-      HTML_ESCAPE_TABLE.inject(s) do |m, kv|
-         m.gsub( kv.first, kv.last)
-      end
-    end
-
-    def e_uri str
-      uri = Addressable::URI.parse(str)
-      if ["http","https","ftp"].include?(uri.scheme) || uri.path.index('/') == 0
-        str
-      else
-        nil
-      end
-    rescue Addressable::URI::InvalidURIError
-      nil
-    end
-
-    def is_uri_key raw_key
-      return false unless raw_key
-      k = raw_key.to_s.strip.downcase
-      k && (k[Underscore_URI_KEY] || k[URI_KEY])
-    end
-
-    def _e o, key = nil
-      # EscapeUtils.escape_html(un_e o)
-      if key && key.to_s['pass_']
-        o
-      elsif is_uri_key(key)
-        e_uri(_e(o))
-      else
-        html(un_e(o))
-      end
-    end
-
     def escape o, key = nil
       return(o.map { |v| escape(v) }) if o.kind_of? Array
 
@@ -367,8 +284,6 @@ class Escape_Escape_Escape
 
       raise "Unknown type: #{o.class}"
     end # === def
-
-
 
   end # === class self ===
 

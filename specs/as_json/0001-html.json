@@ -11,6 +11,13 @@
     "it" : "normalizes UNICODE: \u2167 => VIII",
     "input"  : "<p> \u2167 </p>",
     "output" : "&lt;p&gt; VIII &lt;&#47;p&gt;"
+  },
+
+  {
+    "it" : "encodes special characters: ©",
+    "input"  : "Chars: ©",
+    "output" : "Chars: &copy;"
   }
+
 
 ]
