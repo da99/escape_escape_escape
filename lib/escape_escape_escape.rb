@@ -1,4 +1,6 @@
 
+require 'unf'
+
 require "escape_utils"
 
 require 'escape_utils/html/rack' # to patch Rack::Utils
@@ -41,7 +43,9 @@ class Escape_Escape_Escape
 
   CR                      = "\r"
 
-  TABS                    = "\t"
+  TABS                    = /\t*/
+  TAB                     = "\t"
+  HTML_TAB                = "&#09;"
 
   REPEATING_DOTS = /\.{1,}/
 
@@ -163,7 +167,7 @@ class Escape_Escape_Escape
     def clean_utf8 s
       s.
         encode(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8).
-        gsub(TABS                     , "  ").
+        gsub(TAB                      , "  ").
         gsub(CR                       , "").
         gsub(UN_PRINT_ABLE            , '').
         gsub(CONTROL_CHARS            , "\n" ).
@@ -304,21 +308,24 @@ class Escape_Escape_Escape
       # Check options.
       @plaintext_allowed_options ||= [ :spaces, :tabs ]
       invalid_opts = opts - @plaintext_allowed_options
-      raise(ArgumentError, "INVALID OPTION: #{invalid_opts.inspect}" ) if !invalid_opts.empty?
+      fail(ArgumentError, "INVALID OPTION: #{invalid_opts.inspect}" ) if !invalid_opts.empty?
 
       # Save tabs if requested.
-      raw_str = raw_str.gsub("\t", "&#09;") if opts.include?(:tabs)
+      raw_str = raw_str.gsub(TAB, HTML_TAB) if opts.include?(:tabs)
 
       # First: Normalize characters.
       # Second: Strip out control characters.
       # Note: Must be normalized first, then strip.
-      # See: http://msdn.microsoft.com/en-us/library/ms776393(VS.85).aspx
-      final_str = raw_str.
-        split("\n").
-        map { |line|
-          line.chars.normalize.gsub( CONTROLS_CHARS, '' )
-        }.
-        join("\n")
+      # See: http://msdn.microsoft.com/en-us/library/dd374126(v=vs.85).aspx
+      final_str = begin
+                    raw_str.
+                      split(NL).
+                      map { |line|
+                        UNF::Normalizer.normalize(line, :nfkc).
+                          gsub( CONTROL_CHARS, '' )
+                      }.
+                      join(NL)
+                  end
 
       # Save whitespace or strip.
       if !opts.include?(:spaces)
@@ -326,11 +333,11 @@ class Escape_Escape_Escape
       end
 
       # Normalize quotations and other characters through HTML entity encoding/decoding.
-      final_str = coder.decode( normalised_str Coder.encode(final_str, :named) )
+      final_str = CODER.decode( CODER.encode(CODER.decode( final_str ), :named) )
 
       # Put back tabs by request.
       if opts.include?(:tabs)
-          final_str = final_str.gsub("&#09;", "\t")
+        final_str = final_str.gsub(HTML_TAB, TAB)
       end
 
       final_str
@@ -377,23 +384,23 @@ class Escape_Escape_Escape
     end
 
     def escape o, key = nil
-      return(o.map { |v| Escape_All.escape(v) }) if o.kind_of? Array
+      return(o.map { |v| escape(v) }) if o.kind_of? Array
 
       if o.kind_of? Hash
         new_o = {}
 
-        o.each { |k, v| new_o[Escape_All.escape(k)] = Escape_All.escape(v, k) }
+        o.each { |k, v| new_o[escape(k)] = escape(v, k) }
 
         return new_o
       end
 
       if o.is_a?(String)
-        o = Coder.encode(un_escape(o), :named, :hexadecimal)
-        return Escape_All._e(o, key)
+        o = CODER.encode(un_escape(o), :named, :hexadecimal)
+        return _e(o, key)
       end
 
       if o.is_a?(Symbol)
-        return Escape_All._e(o.to_s).to_sym
+        return _e(o.to_s).to_sym
       end
 
       if o == true || o == false || o.kind_of?(Numeric)
