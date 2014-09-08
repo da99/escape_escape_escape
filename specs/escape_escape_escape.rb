@@ -278,7 +278,7 @@ describe( 'Sanitize') {
 
   it( 'escapes all values in nested arrays') {
     HTML = "<b>test</b>"
-    assert.deepEqual(E([{name:{name: HTML}}]), [{name: {name: _s.escapeHTML(HTML)}}])
+    E([{name:{name: HTML}}]).should == [{name: {name: _s.escapeHTML(HTML)}}]
   }
 
 } # // === end desc
