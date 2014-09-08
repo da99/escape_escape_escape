@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bacon"         , ">= 1.0"
   spec.add_development_dependency "Bacon_Colored" , ">= 0.1"
   spec.add_development_dependency "multi_json"    , ">= 1.10"
+  spec.add_development_dependency "sanitize"    , ">= 3.0.1"
 end

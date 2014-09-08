@@ -361,7 +361,27 @@ describe :other do
       E(input).should == ''
     end
 
-  end
+    it "removes unprintable characters" do
+      input = "end\u2028-\u2029"
+      E(input).
+        should == "end-"
+    end
+
+  end # === describe
+
+  describe :href do
+
+    it 'does not re-escaped already escaped :href' do
+      input = EscapeUtils.escape_html("http://www.example.com/")
+      E(input).should == input
+    end
+
+    it 'lower-cases scheme' do
+      input = "hTTp://www.example.com/"
+      E(input).should == EscapeUtils.escape_html(input).downcase
+    end
+
+  end # === :href
 
 end # === describe :other
 
