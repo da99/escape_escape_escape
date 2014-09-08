@@ -53,12 +53,12 @@ describe ":clean_utf8" do
     s = [160, 160,64, 116, 119, 101, 108, 108, 121, 109, 101, 160, 102, 105, 108, 109].
       inject('', :<<)
 
-    assert :==, "@twellyme film", Okdoki::Escape_All.clean_utf8(s).strip
+    "@twellyme film".should == E.clean_utf8(s).strip
   end
 
   it "replaces tabs with spaces" do
     s = "a\t \ta"
-    assert :==, "a   a", Okdoki::Escape_All.clean_utf8(s)
+    "a   a".should == E.clean_utf8(s)
   end
 
 end # === describe :clean_utf8 ===
@@ -68,18 +68,18 @@ end # === describe :clean_utf8 ===
 describe ':un_e' do
 
   it 'un-escapes escaped text mixed with HTML' do
-    s = "<p>Hi&amp;</p>";
-    assert :==, "<p>Hi&</p>", Okdoki::Escape_All.un_e(s);
+    s = "<p>Hi&amp;</p>"
+    "<p>Hi&</p>".should == E.un_e(s)
   end
 
   it 'un-escapes special chars: "Hello ©®∆"' do
     s = "Hello &amp; World &#169;&#174;&#8710;"
     t = "Hello & World ©®∆"
-    assert :==, t, Okdoki::Escape_All.un_e(s)
+    t.should == E.un_e(s)
   end
 
   it 'un-escapes all 70 different combos of "<"' do
-    assert :==, "< %3C", Okdoki::Escape_All.un_e(BRACKET).split.uniq.join(' ')
+    "< %3C".should == E.un_e(BRACKET).split.uniq.join(' ')
   end
 
 end # === describe :un_e
@@ -88,38 +88,38 @@ end # === describe :un_e
 describe ':escape' do
 
   it 'does not re-escape already escaped text mixed with HTML' do
-    h = "<p>Hi</p>";
-    e = Okdoki::Escape_All.escape(h);
-    o = e + h;
-    assert :==, Okdoki::Escape_All.escape(o), Okdoki::Escape_All.escape(h + h)
+    h = "<p>Hi</p>"
+    e = E.escape(h)
+    o = e + h
+    E.escape(o).shold == E.escape(h + h)
   end
 
   it 'escapes special chars: "Hello ©®∆"' do
     s = "Hello & World ©®∆"
     t = "Hello &amp; World &#169;&#174;&#8710;"
     t = "Hello &amp; World &copy;&reg;&#x2206;"
-    assert :==, t, Okdoki::Escape_All.escape(s)
+    t.should == E.escape(s)
   end
 
   it 'escapes all 70 different combos of "<"' do
-    assert :==, "&lt; %3C", Okdoki::Escape_All.escape(BRACKET).split.uniq.join(' ')
+    "&lt; %3C".should == E.escape(BRACKET).split.uniq.join(' ')
   end
 
   it 'escapes all keys in nested objects' do
     html = "<b>test</b>"
-    t    = {" a &gt;" => {" a &gt;" => Okdoki::Escape_All.escape(html) }}
-    assert :==, t, Okdoki::Escape_All.escape({" a >" => {" a >" => html}})
+    t    = {" a &gt;" => {" a &gt;" => E.escape(html) }}
+    t.should == E.escape({" a >" => {" a >" => html}})
   end
 
   it 'escapes all values in nested objects' do
     html = "<b>test</b>"
-    t    = {name: {name: Okdoki::Escape_All.escape(html)}}
-    assert :==, t, Okdoki::Escape_All.escape({name:{name: html}})
+    t    = {name: {name: E.escape(html)}}
+    t.should == E.escape({name:{name: html}})
   end
 
   it 'escapes all values in nested arrays' do
     html = "<b>test</b>"
-    assert :==, [{name: {name: Okdoki::Escape_All.escape(html)}}], Okdoki::Escape_All.escape([{name:{name: html}}])
+    [{name: {name: E.escape(html)}}].should == E.escape([{name:{name: html}}])
   end
 
   'uri url href'.split.each { |k| # ==============================================
@@ -127,67 +127,67 @@ describe ':escape' do
     it "escapes values of keys :#{k} that are valid /path" do
       a = {:key=>{:"#{k}" => "/path/mine/&"}}
       t = {:key=>{:"#{k}" => "/path/mine/&amp;"}}
-      assert :==, t, Okdoki::Escape_All.escape(a)
+      t.should == E.escape(a)
     end
 
     it "sets nil any keys ending with :#{k} and have invalid uri" do
       a = {:key=>{:"#{k}" => "javascript:alert(s)"}}
       t = {:key=>{:"#{k}" => nil                  }}
-      assert :==, t, Okdoki::Escape_All.escape(a)
+      t.should == E.escape(a)
     end
 
     it "sets nil any keys ending with _#{k} and have invalid uri" do
       a = {:key=>{:"my_#{k}" => "javascript:alert(s)"}}
       t = {:key=>{:"my_#{k}" => nil                  }}
-      assert :==, t, Okdoki::Escape_All.escape(a)
+      t.should == E.escape(a)
     end
 
     it "escapes values of keys with _#{k} that are valid https uri" do
       a = {:key=>{:"my_#{k}" => "https://www.yahoo.com/&"}}
       t = {:key=>{:"my_#{k}" => "https://www.yahoo.com/&amp;"}}
-      assert :==, t, Okdoki::Escape_All.escape(a)
+      t.should == E.escape(a)
     end
 
     it "escapes values of keys with _#{k} that are valid uri" do
       a = {:key=>{:"my_#{k}" => "http://www.yahoo.com/&"}}
       t = {:key=>{:"my_#{k}" => "http://www.yahoo.com/&amp;"}}
-      assert :==, t, Okdoki::Escape_All.escape(a)
+      t.should == E.escape(a)
     end
 
     it "escapes values of keys ending with _#{k} that are valid /path" do
       a = {:key=>{:"my_#{k}" => "/path/mine/&"}}
       t = {:key=>{:"my_#{k}" => "/path/mine/&amp;"}}
-      assert :==, t, Okdoki::Escape_All.escape(a)
+      t.should == E.escape(a)
     end
 
     it "allows unicode uris" do
       a = {:key=>{:"my_#{k}" => "http://кц.рф"}}
       t = {:key=>{:"my_#{k}" => "http://&#x43a;&#x446;.&#x440;&#x444;"}}
-      assert :==, t, Okdoki::Escape_All.escape(a)
+      t.should == E.escape(a)
     end
   }
 
   # === password field
   it "does not escape :pass_word key" do
     a = {:pass_word=>"&&&"}
-    assert :==, a, Okdoki::Escape_All.escape(a)
+    a.should == E.escape(a)
   end
 
   it "does not escape :confirm_pass_word key" do
     a = {:confirm_pass_word=>"&&&"}
-    assert :==, a, Okdoki::Escape_All.escape(a)
+    a.should == E.escape(a)
   end
 
   [true, false].each do |v|
     it "does not escape #{v.inspect}" do
       a = {:something=>v}
-      assert :==, a, Okdoki::Escape_All.escape(a)
+      a.should == E.escape(a)
     end
   end
 
   it "does not escape numbers" do
     a = {:something=>1}
-    assert :==, a, Okdoki::Escape_All.escape(a)
+    E.escape(a).should == a
   end
 
 end # === end desc
@@ -197,66 +197,65 @@ end # === end desc
 describe( 'uri' ) {
 
   it( 'normalizes address' ) {
-    var s = "hTTp://wWw.test.com/";
-    assert.equal(E.uri(s), s.toLowerCase());
+    s = "hTTp://wWw.test.com/"
+    E.uri(s).should == s.upcase
   }
 
   it( 'returns an Error if path contains: <' ) {
-    var s = "http://www.test.com/<something/";
-    assert.equal(E.uri(s).constructor, Error);
+    s = "http://www.test.com/<something/"
+    E.uri(s).should == s.upcase
   }
 
   it( 'returns an Error if path contains HTML entities' ) {
-    var s = "http://6&#9;6.000146.0x7.147/";
-    assert.equal(E.uri(s).constructor, Error);
+    s = "http://6&#9;6.000146.0x7.147/"
+    E.uri(s).should == s.upcase
   }
 
   it( 'returns an Error if path contains HTML entities' ) {
-    var s = "http://www.test.com/&nbsp;s/";
-    assert.equal(E.uri(s).constructor, Error);
+    s = "http://www.test.com/&nbsp;s/"
+    E.uri(s).should == s.upcase
   }
 
   it( 'returns an Error if query string contains HTML entities' ) {
-    var s = "http://www.test.com/s/test?t&nbsp;test";
-    assert.equal(E.uri(s).constructor, Error);
+    s = "http://www.test.com/s/test?t&nbsp;test"
+    E.uri(s).should == s.upcase
   }
 
 } # === end desc
-
 
 
 describe( 'Sanitize') {
 
   it( 'un-escapes escaped text mixed with HTML') {
     s = "<p>Hi&amp;</p>"
-    assert.equal(U(s), "<p>Hi&</p>")
+    U(s).should == "<p>Hi&</p>"
   }
 
   it( 'does not re-escape already escaped text mixed with HTML') {
     h = "<p>Hi</p>"
     e = _s.escapeHTML(h)
     o = e + h
-    assert.equal(E(o), _s.escapeHTML(h + h))
+    E(o).should == _s.escapeHTML(h + h)
   }
 
   it( 'escapes special chars: "Hello ©®∆"') {
     s = "Hello & World ©®∆"
     t = "Hello &amp; World &#169;&#174;&#8710;"
-    assert.equal(E(s), t)
+    E(s).should == t
   }
 
   it( 'un-escapes special chars: "Hello ©®∆"') {
     s = "Hello &amp; World &#169;&#174;&#8710;"
     t = "Hello & World ©®∆"
-    assert.equal(U(s), t)
+    U(s).should == t
   }
 
   it( 'escapes all 70 different combos of "<"') {
-    assert.equal(_.uniq(E(BRACKET.trim()).split(/\s+/)).join(' '), "&lt; %3C")
+    E(BRACKET.strip).split.uniq.join(' ').should == "&lt;"
   }
 
   it( 'un-escapes all 70 different combos of "<"') {
-    assert.equal(_.uniq(U(BRACKET.trim()).split(/\s+/)).join(' '), "< %3C")
+    U(BRACKET.strip).split.join(' ').should == "<"
   }
 
   it( 'escapes all keys in nested objects') {
