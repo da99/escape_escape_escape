@@ -39,35 +39,44 @@ class Escape_Escape_Escape
 
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
 
-  UN_PRINT_ABLE           = /[^[:print:]\n]/
-
-  CR                      = "\r"
-
-  TABS                    = /\t*/
-  TAB                     = "\t"
-  HTML_TAB                = "&#09;"
-  TWO_SPACES              = '  '
-  BLANK                   = ''
-  SPACE                   = ' '
-
-  REPEATING_DOTS = /\.{1,}/
-
-  CONTROL_CHARS           = /[[:cntrl:]\x00-\x1f]+/  # Don't use "\x20" because that is the space character.
-
+  TABS           = /\t*/
+  TAB            = "\t"
+  HTML_TAB       = "&#09;"
+  TWO_SPACES     = '  '
+  BLANK          = ''
+  SPACE          = ' '
 
   NL             = "\n";
   SPACES         = /\ +/;
   VALID_HTML_ID  = /^[0-9a-z_]+$/i;
   VALID_HTML_TAG = /^[0-9a-z_]+$/i;
 
+  REPEATING_DOTS = /\.{1,}/
+
   REGEXP_OPTS = Regexp::FIXEDENCODING | Regexp::IGNORECASE
 
-  # tabs, etc.
-  Control = Regexp.new("[[:cntrl:]]".force_encoding('utf-8'), REGEXP_OPTS) # unicode whitespaces, like 160 codepoint
+  # === MULTI_CONTROL_CHARS: ==================================
+  #
+  # Unicode whitespaces, like 160 codepoint, tabs, etc.
+  # Excludes newline.
+  #
+  # Examples:
+  #   \r\n \r\n -> \n \n
+  #
+  # NOTE: Don't use "\x20" because that is the space character.
+  #
+  # =====================================================
+  MULTI_CONTROL_AND_UNPRINTABLE = /[[:cntrl:]\x00-\x1f&&[^\n[:print:]]]+/i
 
+  # =====================================================
+
+
+  # =====================================================
   # From:
   # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
-  WHITE_SPACE = Regexp.new("[[:space:]]&&[^\n]".force_encoding('utf-8'), REGEXP_OPTS)
+  # =====================================================
+  WHITE_SPACE = /[[:space:]&&[^\n]]/
+  # =====================================================
 
   ENCODING_OPTIONS_CLEAN_UTF8 = {
     :invalid           => :replace, # Replace invalid byte sequences
@@ -95,7 +104,11 @@ class Escape_Escape_Escape
       Regexp.new(clean_utf8(str), REGEXP_OPTS)
     end
 
-    # From:
+    # Normalization, then strip:
+    #   http://msdn.microsoft.com/en-us/library/dd374126(v=vs.85).aspx
+    #   http://www.unicode.org/faq/normalization.html
+    #
+    # Getting rid of non-ascii characters in ruby:
     # http://stackoverflow.com/questions/1268289/how-to-get-rid-of-non-ascii-characters-in-ruby
     #
     # Test:
@@ -103,19 +116,25 @@ class Escape_Escape_Escape
     # inject('', :<<)
     #
     #
-    def clean_utf8 s
-      s.
+    def clean_utf8 raw_s, *opts
+
+      # === Check options. ==================================================================
+      @plaintext_allowed_options ||= [ :spaces, :tabs ]
+      invalid_opts = opts - @plaintext_allowed_options
+      fail(ArgumentError, "INVALID OPTION: #{invalid_opts.inspect}" ) if !invalid_opts.empty?
+      # =====================================================================================
+
+      # === Save tabs if requested.
+      raw_s = raw_s.gsub(TAB, HTML_TAB) if opts.include?(:tabs)
+
+      raw_s.
         encode(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8).
-        gsub(TAB                      , TWO_SPACES).
-        gsub(CR                       , BLANK).
-        gsub(UN_PRINT_ABLE            , BLANK).
-        gsub(CONTROL_CHARS            , NL ).
-        gsub(WHITE_SPACE              , SPACE).
-        gsub(Control, NL).split(NL).
-        map { |line|
-          UNF::Normalizer.normalize(line, :nfkc).
-            gsub( CONTROL_CHARS, '' )
-        }.join(NL)
+        scrub.
+        to_nfkc.
+        join(NL).
+        gsub(TAB                           , TWO_SPACES).
+        gsub(MULTI_CONTROL_AND_UNPRINTABLE , BLANK).
+        gsub(WHITE_SPACE                   , SPACE)
     end
 
     def path raw
@@ -193,20 +212,7 @@ class Escape_Escape_Escape
     # ===============================================
     def plaintext( raw_str, *opts)
 
-      # Check options.
-      @plaintext_allowed_options ||= [ :spaces, :tabs ]
-      invalid_opts = opts - @plaintext_allowed_options
-      fail(ArgumentError, "INVALID OPTION: #{invalid_opts.inspect}" ) if !invalid_opts.empty?
 
-      # Save tabs if requested.
-      raw_str = raw_str.gsub(TAB, HTML_TAB) if opts.include?(:tabs)
-
-      # First: Normalize characters.
-      # Second: Strip out control characters.
-      # Note: Must be normalized first, then strip.
-      # See: http://msdn.microsoft.com/en-us/library/dd374126(v=vs.85).aspx
-      # See: http://www.unicode.org/faq/normalization.html
-      final_str = clean_utf8(raw_str)
 
       # Save whitespace or strip.
       if !opts.include?(:spaces)
