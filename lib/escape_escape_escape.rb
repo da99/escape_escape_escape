@@ -139,23 +139,14 @@ class Escape_Escape_Escape
     # with extensions.
     # =========================================================
     def path( raw_path )
-      clean_crumbs = raw_path.split('/').map { |crumb| filename(crumb) }
-      File.join( *clean_crumbs )
-    end
+      clean_utf8(raw_path).split('/').map { |crumb|
 
-    # ====================================================================
-    # Returns a String where all characters except:
-    # letters numbers underscores dashes
-    # are replaced with a dash.
-    # It also delets any non-alphanumeric characters at the end
-    # of the String.
-    # ====================================================================
-    def filename( raw_filename )
-      plaintext( raw_filename ).
-        downcase.
-        gsub(REPEATING_DOTS, '.').
-        gsub(INVALID_FILE_NAME_CHARS, '-').
-        to_s
+        crumb.
+          gsub(REPEATING_DOTS, '.').
+          gsub(INVALID_FILE_NAME_CHARS, '-').
+          to_s
+
+      }.join( *clean_crumbs )
     end
 
     # ===============================================
