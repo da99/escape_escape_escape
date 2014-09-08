@@ -104,6 +104,13 @@ class Escape_Escape_Escape
       Regexp.new(clean_utf8(str), REGEXP_OPTS)
     end
 
+    # ===============================================
+    # Raises: TZInfo::InvalidTimezoneIdentifier.
+    # ===============================================
+    def validate_timezone(timezone)
+      TZInfo::Timezone.get( timezone.to_s.strip ).identifier
+    end
+
     # ==================================================================
     # * normalized to :KC
     # * "\r\n" changed to "\n"
@@ -158,14 +165,15 @@ class Escape_Escape_Escape
       clean
     end
 
-    def path raw
-      href raw
-    end
+    alias path href
 
     # ===============================================
-    # :href
+    #
+    # Handles urls and relative paths.
+    #
     # Inspired from:
     #   http://stackoverflow.com/a/13041565
+    #
     # ===============================================
     def href raw_str
       str = clean_utf8(raw_str)
@@ -184,13 +192,6 @@ class Escape_Escape_Escape
       rescue URI::InvalidURIError
         nil
       end
-    end
-
-    # ===============================================
-    # Raises: TZInfo::InvalidTimezoneIdentifier.
-    # ===============================================
-    def validate_timezone(timezone)
-      TZInfo::Timezone.get( timezone.to_s.strip ).identifier
     end
 
     # ===============================================
