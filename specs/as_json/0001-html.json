@@ -8,16 +8,9 @@
   },
 
   {
-    "it" : "removes invalid attributes",
-    "input"  : "<a ignoreme=\"blah\">Hello GoodBye</a>",
-    "output" : "<a>Hello GoodBye</a>"
-  },
-
-  {
-    "it" : "removes \"javascript:\" protocol in \"href\" attributes",
-    "input" : "<a href=\"javascript:alert()\">hello</a>",
-    "output" : "<a>hello</a>"
+    "it" : "normalizes UNICODE: \u2167 => VIII",
+    "input"  : "<p> \u2167 </p>",
+    "output" : "&lt;p&gt; VIII &lt;&#47;p&gt;"
   }
-
 
 ]
