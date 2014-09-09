@@ -233,9 +233,9 @@ class Escape_Escape_Escape
       return(send(method_name, o.to_s).to_sym) if o.is_a?(Symbol)
       return(o.map { |v| escape(v, method_name) }) if o.kind_of? Array
       return send(method_name, o) if o.is_a?(String)
-      return o if o == true || o == false || o.kind_of?(Numeric)
+      return send(method_name, o.to_s) if o == true || o == false || o.kind_of?(Numeric)
 
-      fail Unknown_Type, o.inspect
+      fail Invalid, "Not a String, Number, Array, or Hash"
     end # === def
 
   end # === class self ===
