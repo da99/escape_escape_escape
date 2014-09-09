@@ -27,19 +27,19 @@ input   BRACKETS
 output  "&lt; %3C"
 
 
-it     "does not escape: true"
+it     "fails with RuntimeError if: true"
 input  true
-output true
+raises RuntimeError, /Not a string: true/)
 
 
-it     "does not escape: false"
+it     "fails with RuntimeError if: false"
 input  false
-output false
+raises RuntimeError, /Not a string: false/)
 
 
-it     "does not escape numbers"
+it     "fails with RuntimeError if numeric"
 input  1
-output 1
+raises RuntimeError, /Not a string: 1/)
 
 
 

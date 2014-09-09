@@ -134,6 +134,8 @@ class Escape_Escape_Escape
     #
     def clean_utf8 raw_s, *opts
 
+      fail("Not a string: #{raw_s.inspect}") unless raw_s.is_a?(String)
+
       # === Check options. ==================================================================
       @plaintext_allowed_options ||= [ :spaces, :tabs ]
       invalid_opts = opts - @plaintext_allowed_options
@@ -174,6 +176,7 @@ class Escape_Escape_Escape
     #
     # ===============================================
     alias_method :path, def href raw_str
+      fail("Not a string: #{raw_str.inspect}") unless raw_str.is_a?(String)
       str = clean_utf8(raw_str)
       begin
         uri = URI.parse(str)
@@ -202,6 +205,7 @@ class Escape_Escape_Escape
     end
 
     def decode_html raw
+      fail("Not a string: #{raw.inspect}") unless raw.is_a?(String)
       EscapeUtils.unescape_html clean_utf8(raw)
     end
 
