@@ -34,7 +34,7 @@ it    "sets nil if invalid uri:"
 input "javascript:alert(s)"
 output nil
 
-it    "sets nil any keys ending with _#{k} and have invalid uri"
+it    "sets nil if invalid uri"
 input "javascript:alert(s)"
 output nil
 
@@ -48,7 +48,7 @@ input  "http://www.yahoo.com/&"
 output "http://www.yahoo.com/&amp;"
 
 
-it     "escapes valid /path:" do
+it     "escapes valid /path:"
 input  "/path/mine/&"
 output "/path/mine/&amp;"
 
@@ -98,9 +98,7 @@ input( {
   " a >" => {" a >"=> "<b>test</b>"}
 })
 output(  {
-  " a &gt;" => {
-    " a &gt;" => "&lt;b&gt;test&lt;&#47;b&gt;"
-  }
+  " a &gt;" => { " a &gt;" => "&lt;b&gt;test&lt;&#47;b&gt;" }
 })
 
 
@@ -110,7 +108,7 @@ output( {name: {name: "&lt;b&gt;test&lt;&#47;b&gt;"}} )
 
 
 it    'escapes all values in nested arrays'
-input  [{name:{name: "<b>test</b>"}}]
+input  [{name: {name: "<b>test</b>"}}]
 output [{name: {name: "&lt;b&gt;test&lt;&#47;b&gt;"}}]
 
 

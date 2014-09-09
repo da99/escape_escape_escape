@@ -28,6 +28,10 @@ end
 
 class Escape_Escape_Escape
 
+  # === From: https://raw.githubusercontent.com/rgrove/sanitize/master/lib/sanitize.rb
+  REGEX_UNSUITABLE_CHARS = /[\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a-\u202e\u206a-\u206f\ufff9-\ufffb\ufeff\ufffc\u{1d173}-\u{1d17a}\u{e0000}-\u{e007f}]/u
+  # ==================================================================================
+
   INVALID            = Class.new(RuntimeError)
   Unknown_Type       = Class.new(RuntimeError)
 
@@ -161,8 +165,6 @@ class Escape_Escape_Escape
       clean
     end
 
-    alias path href
-
     # ===============================================
     #
     # Handles urls and relative paths.
@@ -171,7 +173,7 @@ class Escape_Escape_Escape
     #   http://stackoverflow.com/a/13041565
     #
     # ===============================================
-    def href raw_str
+    alias_method :path, def href raw_str
       str = clean_utf8(raw_str)
       begin
         uri = URI.parse(str)

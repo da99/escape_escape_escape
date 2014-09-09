@@ -1,6 +1,11 @@
 
+require 'Bacon_Colored'
+require 'escape_escape_escape'
+require 'pry'
+
 require "multi_json"
 require "escape_escape_escape"
+require 'sanitize'
 
 BRACKETS = <<-EOF.split.join(' ')
 < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060
@@ -32,16 +37,16 @@ class It_Dsl
     end
 
     def it str
-      @args << str
+      args << str
     end
 
     def input o
-      @args << o
+      args << o
     end
 
     def output o
       if args.size != 2
-        fail "Missing values: #{args.inspect}, #{o.inspect}"
+        fail "#{tests.last[:describe]}: Missing values: #{args.inspect}, #{o.inspect}"
       end
 
       i = args.pop
