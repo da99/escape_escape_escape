@@ -28,7 +28,8 @@ end
 
 class Escape_Escape_Escape
 
-  # === From: https://raw.githubusercontent.com/rgrove/sanitize/master/lib/sanitize.rb
+  # === From sanitize gem:
+  #   https://raw.githubusercontent.com/rgrove/sanitize/master/lib/sanitize.rb
   REGEX_UNSUITABLE_CHARS = /[\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a-\u202e\u206a-\u206f\ufff9-\ufffb\ufeff\ufffc\u{1d173}-\u{1d17a}\u{e0000}-\u{e007f}]/u
   # ==================================================================================
 
@@ -141,15 +142,15 @@ class Escape_Escape_Escape
       raw_s = raw_s.dup
 
       # === Save tabs if requested.
-      raw_s = raw_s.gsub!(TAB, HTML_TAB) if opts.include?(:tabs)
+      raw_s.gsub!(TAB, HTML_TAB) if opts.include?(:tabs)
 
-      clean = raw_s.
-        encode(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8).
-        scrub.
-        gsub(TAB                           , TWO_SPACES).
-        gsub(MULTI_CONTROL_AND_UNPRINTABLE , BLANK).
-        gsub(REGEX_UNSUITABLE_CHARS        , ' ').
-        to_nfkc
+      raw_s.encode!(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8)
+      raw_s.scrub!
+      raw_s.gsub!(TAB                           , TWO_SPACES)
+      raw_s.gsub!(MULTI_CONTROL_AND_UNPRINTABLE , BLANK)
+      raw_s.gsub!(REGEX_UNSUITABLE_CHARS        , ' ')
+
+      clean = raw_s.to_nfkc
 
       # Save whitespace or strip.
       if !opts.include?(:spaces)
