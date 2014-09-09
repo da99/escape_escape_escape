@@ -36,6 +36,8 @@ class Escape_Escape_Escape
   CODER              = HTMLEntities.new(:xhtml1)
 
   INVALID            = Class.new(RuntimeError)
+  INVALID_HREF       = Class.new(RuntimeError)
+
   Unknown_Type       = Class.new(RuntimeError)
 
   TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
@@ -176,17 +178,15 @@ class Escape_Escape_Escape
     alias_method :path, def href raw_str
       fail("Not a string: #{raw_str.inspect}") unless raw_str.is_a?(String)
 
-      begin
-        uri = URI.parse(decode_html(raw_str))
-        if uri.scheme
-          uri.scheme = uri.scheme.to_s.strip.downcase
-        end
-        return nil if (uri.scheme || ''.freeze)['javascript'.freeze]
-        return nil if !uri.host && !uri.relative?
-        html(EscapeUtils.escape_uri uri.to_s)
-      rescue URI::InvalidURIError
-        nil
+      uri = URI.parse(decode_html(raw_str))
+      if uri.scheme
+        uri.scheme = uri.scheme.to_s.strip.downcase
       end
+
+      return INVALID_HREF if (uri.scheme || ''.freeze)['javascript'.freeze]
+      return INVALID_HREF if !uri.host && !uri.relative?
+
+      html(EscapeUtils.escape_uri uri.to_s)
     end
 
     # ===============================================
