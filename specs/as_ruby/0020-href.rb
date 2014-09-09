@@ -93,9 +93,11 @@ it     'does not re-escaped already escaped :href'
 input  "http:&#47;&#47;www.example.com&#47;"
 output "http:&#47;&#47;www.example.com&#47;"
 
+
 it     'lower-cases scheme'
 input  "hTTp://www.example.com/"
 output "http:&#47;&#47;www.example.com&#47;"
+
 
 it    'returns nil if contains &sol;, regardless of case:'
 input  "htTp:&soL;&sOl;file.com/img.png"
