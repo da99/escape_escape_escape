@@ -35,8 +35,8 @@ class Escape_Escape_Escape
 
   CODER              = HTMLEntities.new(:xhtml1)
 
-  INVALID            = Class.new(RuntimeError)
-  INVALID_HREF       = Class.new(RuntimeError)
+  Invalid            = Class.new(RuntimeError)
+  Invalid_HREF       = Class.new(RuntimeError)
 
   Unknown_Type       = Class.new(RuntimeError)
 
@@ -178,15 +178,19 @@ class Escape_Escape_Escape
     alias_method :path, def href raw_str
       fail("Not a string: #{raw_str.inspect}") unless raw_str.is_a?(String)
 
-      uri = URI.parse(decode_html(raw_str))
-      if uri.scheme
-        uri.scheme = uri.scheme.to_s.strip.downcase
+      begin
+        uri = URI.parse(decode_html(raw_str))
+        if uri.scheme
+          uri.scheme = uri.scheme.to_s.strip.downcase
+        end
+
+        fail( Invalid_HREF, "javascript:// is not allowed" ) if (uri.scheme || ''.freeze)['javascript'.freeze]
+        fail( Invalid_HREF, "address is invalid") if !uri.host && !uri.relative?
+
+        html(EscapeUtils.escape_uri uri.to_s)
+      rescue URI::InvalidURIError => e
+        raise Invalid_HREF, e.message
       end
-
-      return INVALID_HREF if (uri.scheme || ''.freeze)['javascript'.freeze]
-      return INVALID_HREF if !uri.host && !uri.relative?
-
-      html(EscapeUtils.escape_uri uri.to_s)
     end
 
     # ===============================================

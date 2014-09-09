@@ -1,28 +1,28 @@
 
 
-it     "returns nil if scheme is whitespace padded:"
+it     "raises Invalid_HREF if scheme is whitespace padded:"
 input  "javascript ://alert()"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /javascript/
 
 
-it     "returns nil if scheme is whitespace padded, slash encoded:"
+it     "raises Invalid_HREF if scheme is whitespace padded, slash encoded:"
 input  "javascript :&sOL;/alert()"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /javascript/
 
 
-it     "returns nil if colon encode:"
+it     "raises Invalid_HREF if colon encode:"
 input  "javascript&#058;//alert()"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /javascript/
 
 
-it     "returns nil if string is whitespace padded:"
+it     "raises Invalid_HREF if string is whitespace padded:"
 input  "   javascript://alert()  "
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /javascript/
 
 
-it     "returns nil if string is whitespace padded, multi-case:"
+it     "raises Invalid_HREF if string is whitespace padded, multi-case:"
 input  "   javaSCript ://alert()  "
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /javaSCript/i
 
 
 it     "escapes  valid /path"
@@ -30,13 +30,13 @@ input  "/path/mine/&"
 output "&#47;path&#47;mine&#47;&amp;"
 
 
-it    "sets nil if invalid uri:"
+it    "raises Invalid_HREF if invalid uri:"
 input "javascript:alert(s)"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /javascript/
 
-it    "sets nil if invalid uri"
+it    "raises Invalid_HREF if invalid uri"
 input "javascript:alert(s)"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /javascript/
 
 it     "escapes valid https uri"
 input  "https://www.yahoo.com/&"
@@ -53,9 +53,9 @@ input  "/path/mine/&"
 output "&#47;path&#47;mine&#47;&amp;"
 
 
-it     "returns nil if unicode uris:"
+it     "raises Invalid_HREF if it contains unicode:"
 input  "http://кц.рф"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /bad URI/
 
 
 it    'normalizes address:'
@@ -63,9 +63,9 @@ input "hTTp://wWw.test.com/"
 output "http:&#47;&#47;wWw.test.com&#47;"
 
 
-it     'returns nil if invalid uri: < :'
+it     'fails w/ Invalid_HREF if invalid uri: < :'
 input  "http://www.test.com/<something/"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /http:\/\/www.test.com\/<something\//
 
 
 it     'returns html escaped chars: \' :'
@@ -73,19 +73,19 @@ input  "http://www.test.com/?test='something/"
 output "http:&#47;&#47;www.test.com&#47;?test=&#39;something&#47;"
 
 
-it    'returns nil if HTML entities in uri:'
+it    'fails w/ Invalid_HREF if HTML entities in uri:'
 input "http://6&#9;6.000146.0x7.147/"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /bad URI/
 
 
-it      'returns nil if path contains html entities:'
-input   "http://www.test.com/&nbsp;s/"
-output  nil
+it     'fails w/ Invalid_HREF if path contains html entities:'
+input  "http://www.test.com/&nbsp;s/"
+raises Escape_Escape_Escape::Invalid_HREF, /bad URI/
 
 
-it     'returns nil if query string contains HTML entities:'
+it     'fails w/ Invalid_HREF if query string contains HTML entities:'
 input  "http://www.test.com/s/test?t&nbsp;test"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /bad URI/
 
 
 
@@ -99,9 +99,9 @@ input  "hTTp://www.example.com/"
 output "http:&#47;&#47;www.example.com&#47;"
 
 
-it    'returns nil if contains &sol;, regardless of case:'
+it    'fails w/ Invalid_HREF if contains &sol;, regardless of case:'
 input  "htTp:&soL;&sOl;file.com/img.png"
-output nil
+raises Escape_Escape_Escape::Invalid_HREF, /address is invalid/
 
 
 
