@@ -58,6 +58,10 @@ class It_Dsl
       tests.last[:tests] << t
     end
 
+    def stack arr
+      self << {it: args.shift, input: args.pop, stack: arr}
+    end
+
     def raises o, m
       self << {it: args.shift, input: args.pop, raises: [o, m]}
     end
@@ -94,6 +98,9 @@ It_Dsl.tests.each { |o|
 
         case
 
+        when o[:describe] == :==
+          t[:input].should == t[:output]
+
         when t.has_key?(:output)
           Escape_Escape_Escape.send(o[:describe], t[:input])
           .should == t[:output]
@@ -103,22 +110,29 @@ It_Dsl.tests.each { |o|
             Escape_Escape_Escape.send(o[:describe], t[:input])
           }.message.should.match(t[:raises].last)
 
-        when t[:output].is_a?(Array)
+        when t.has_key?(:stack) && t[:stack].is_a?(Array)
 
-          target = t[:output].pop
+          stack = t[:stack]
+          actual = Escape_Escape_Escape.send(o[:describe], t[:input])
+          target = stack.pop
 
           begin
-            if t[:output][1].is_a?(Array)
-              meth = t[:output].shift
-              args = t[:output].shift
-              actual = actual.send(o[:describe], *args)
-            else
-              fail "Unknown method: #{t[:output][0].inspect}"
-            end
-          end while !t[:output].empty?
+            case
+            when stack[1].is_a?(Array)
+              meth = stack.shift
+              args = stack.shift
+              actual = actual.send(meth, *args)
 
-          Escape_Escape_Escape.send(o[:describe], t[:input]).
-            should == target
+            when stack.first.is_a?(Symbol)
+              actual = actual.send(stack.shift)
+
+            else
+              fail "Unknown method: #{stack[0].inspect}"
+
+            end
+          end while !stack.empty?
+
+          actual.should == target
 
         else
           fail "Unknown args for test: #{t.inspect}"

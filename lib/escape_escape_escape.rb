@@ -14,7 +14,7 @@ require 'escape_utils/url/rack' # to patch Rack::Utils
 require 'escape_utils/url/uri' # to patch URI
 
 # ======================
-#
+require "htmlentities"
 # ======================
 #
 require "uri"
@@ -31,6 +31,8 @@ class Escape_Escape_Escape
   # === From: https://raw.githubusercontent.com/rgrove/sanitize/master/lib/sanitize.rb
   REGEX_UNSUITABLE_CHARS = /[\u0340\u0341\u17a3\u17d3\u2028\u2029\u202a-\u202e\u206a-\u206f\ufff9-\ufffb\ufeff\ufffc\u{1d173}-\u{1d17a}\u{e0000}-\u{e007f}]/u
   # ==================================================================================
+
+  CODER              = HTMLEntities.new(:xhtml1)
 
   INVALID            = Class.new(RuntimeError)
   Unknown_Type       = Class.new(RuntimeError)
@@ -205,7 +207,7 @@ class Escape_Escape_Escape
 
     def decode_html raw
       fail("Not a string: #{raw.inspect}") unless raw.is_a?(String)
-      EscapeUtils.unescape_html clean_utf8(raw)
+      CODER.decode clean_utf8(raw)
     end
 
     # ===============================================
