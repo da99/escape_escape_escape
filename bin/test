@@ -2,7 +2,12 @@
 # -*- bash -*-
 #
 #
+meth="$(echo specs/as_ruby/*-$1.rb)"
 set -u -e -o pipefail
+
+if [[ -f "$meth" ]]; then
+  export RUBY_TEST_FILE="$meth"
+fi
 
 files="$(echo -n specs/*.rb | tr ' ' '\n' | sort)"
 if [[ -z "$files" ]]; then

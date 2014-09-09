@@ -69,7 +69,13 @@ class It_Dsl
   end # === class << self
 end # == class It_Dsl
 
-Dir.glob("specs/as_ruby/*.rb").sort.each { |f|
+# =================================================
+glob = ENV['RUBY_TEST_FILE'].to_s.strip.empty? ?
+  "specs/as_ruby/*.rb" :
+  ENV['RUBY_TEST_FILE']
+# =================================================
+
+Dir.glob(glob).sort.each { |f|
 
   contents    = File.read f
   method_name = File.basename(f).gsub(/\A\d+-|\.rb\z/, '')
