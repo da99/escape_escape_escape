@@ -27,7 +27,7 @@ output nil
 
 it     "escapes  valid /path"
 input  "/path/mine/&"
-output "/path/mine/&amp;"
+output "&#47;path&#47;mine&#47;&amp;"
 
 
 it    "sets nil if invalid uri:"

@@ -183,13 +183,7 @@ class Escape_Escape_Escape
         return nil if uri.scheme.to_s.strip.downcase['javascript'.freeze]
         return nil if !uri.host && !uri.relative?
         return clean unless uri.relative?
-
-        clean.split('/').map { |crumb|
-          crumb.
-            gsub(REPEATING_DOTS, '.').
-            gsub(INVALID_FILE_NAME_CHARS, '-').
-            to_s
-        }.join( '/' )
+        clean
       rescue URI::InvalidURIError
         nil
       end
