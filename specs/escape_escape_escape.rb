@@ -105,36 +105,6 @@ It_Dsl.tests.each { |o|
 } # === It_Dsl
 
 
-
-describe ':escape' do
-
-  # === password field
-  it "does not escape :pass_word key" do
-    a = {:pass_word=>"&&&"}
-    a.should == E.escape(a)
-  end
-
-  it "does not escape :confirm_pass_word key" do
-    a = {:confirm_pass_word=>"&&&"}
-    a.should == E.escape(a)
-  end
-
-  [true, false].each do |v|
-    it "does not escape #{v.inspect}" do
-      a = {:something=>v}
-      a.should == E.escape(a)
-    end
-  end
-
-  it "does not escape numbers" do
-    a = {:something=>1}
-    E.escape(a).should == a
-  end
-
-end # === end desc
-
-
-
 describe( 'uri' ) {
 
   it( 'normalizes address' ) {

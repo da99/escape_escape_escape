@@ -58,4 +58,18 @@ input  "http://кц.рф"
 output "http://&#x43a;&#x446;.&#x440;&#x444;"
 
 
+it     "does not escape: true"
+input  true
+output true
+
+
+it     "does not escape: false"
+input  false
+output false
+
+
+it     "does not escape numbers"
+input  1
+output 1
+
 
