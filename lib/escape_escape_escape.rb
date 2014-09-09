@@ -66,17 +66,11 @@ class Escape_Escape_Escape
   #
   # NOTE: Don't use "\x20" because that is the space character.
   #
+  # Whitespace regex ([:space:]) from:
+  #   http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
+  #
   # =====================================================
-  MULTI_CONTROL_AND_UNPRINTABLE = /[[:cntrl:]\x00-\x1f&&[^\n[:print:]]]+/i
-
-  # =====================================================
-
-
-  # =====================================================
-  # From:
-  # http://www.rubyinside.com/the-split-is-not-enough-whitespace-shenigans-for-rubyists-5980.html
-  # =====================================================
-  WHITE_SPACE = /[[:space:]&&[^\n]]/
+  MULTI_CONTROL_AND_UNPRINTABLE = /[[:space:][:cntrl:]\x00-\x1f&&[^\n\ [:print:]]]+/i
   # =====================================================
 
   ENCODING_OPTIONS_CLEAN_UTF8 = {
@@ -152,8 +146,7 @@ class Escape_Escape_Escape
         scrub.
         to_nfkc.
         gsub(TAB                           , TWO_SPACES).
-        gsub(MULTI_CONTROL_AND_UNPRINTABLE , BLANK).
-        gsub(WHITE_SPACE                   , SPACE)
+        gsub(MULTI_CONTROL_AND_UNPRINTABLE , BLANK)
 
       # Save whitespace or strip.
       if !opts.include?(:spaces)

@@ -46,8 +46,8 @@ input  "b \u0340\u0341\u17a3\u17d3\u2028\u2029\u202a"
 output "b "
 
 it     "removes unprintable characters"
-input  "end\u2028-\u2029"
-output "end-"
+input  "end-\u2028-\u2029-"
+output "end---"
 
 
 
