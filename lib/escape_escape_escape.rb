@@ -149,7 +149,6 @@ class Escape_Escape_Escape
         encode(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8).
         scrub.
         to_nfkc.
-        join(NL).
         gsub(TAB                           , TWO_SPACES).
         gsub(MULTI_CONTROL_AND_UNPRINTABLE , BLANK).
         gsub(WHITE_SPACE                   , SPACE)
