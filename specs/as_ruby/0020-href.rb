@@ -10,8 +10,18 @@ input  "javascript :&sOL;/alert()"
 raises Escape_Escape_Escape::Invalid_HREF, /javascript/
 
 
-it     "raises Invalid_HREF if colon encode:"
+it     "raises Invalid_HREF if colon encode: &#058; :"
 input  "javascript&#058;//alert()"
+raises Escape_Escape_Escape::Invalid_HREF, /javascript/
+
+
+it     "raises Invalid_HREF if colon encode: &#x03a; :"
+input  "javascript&#x03a;//alert()"
+raises Escape_Escape_Escape::Invalid_HREF, /javascript/
+
+
+it     "raises Invalid_HREF if colon encode: &#x03A; :"
+input  "javascript&#x03A;//alert()"
 raises Escape_Escape_Escape::Invalid_HREF, /javascript/
 
 
