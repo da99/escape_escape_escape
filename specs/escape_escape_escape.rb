@@ -90,24 +90,24 @@ It_Dsl.tests.each { |o|
 
         when t.has_key?(:output)
           Escape_Escape_Escape.send(o[:describe], t[:input])
-          .should == output
+          .should == t[:output]
 
         when !t.has_key?(:output) && t[:raises]
           should.raise(t[:raises].first) {
             Escape_Escape_Escape.send(o[:describe], t[:input])
           }.message.should.match(t[:raises].last)
 
-        when output.is_a?(Array)
+        when t[:output].is_a?(Array)
 
-          target = output.pop
+          target = t[:output].pop
 
           begin
-            if output[1].is_a?(Array)
-              meth = output.shift
-              args = output.shift
+            if t[:output][1].is_a?(Array)
+              meth = t[:output].shift
+              args = t[:output].shift
               actual = actual.send(o[:describe], *args)
             else
-              fail "Unknown method: #{output[0].inspect}"
+              fail "Unknown method: #{t[:output][0].inspect}"
             end
           end while !output.empty?
 
