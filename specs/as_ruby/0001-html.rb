@@ -29,17 +29,17 @@ output  "&lt; %3C"
 
 it     "fails with RuntimeError if: true"
 input  true
-raises RuntimeError, /Not a string: true/)
+raises RuntimeError, /Not a string: true/
 
 
 it     "fails with RuntimeError if: false"
 input  false
-raises RuntimeError, /Not a string: false/)
+raises RuntimeError, /Not a string: false/
 
 
 it     "fails with RuntimeError if numeric"
 input  1
-raises RuntimeError, /Not a string: 1/)
+raises RuntimeError, /Not a string: 1/
 
 
 

@@ -44,22 +44,26 @@ class It_Dsl
       args << o
     end
 
-    def output o
-      if args.size != 2
-        fail "#{tests.last[:describe]}: Missing values: #{args.inspect}, #{o.inspect}"
+    def << t
+      if !args.empty?
+        fail "Unknown values pending for: #{tests.last[:describe]}: #{args.inspect}, #{o.inspect}"
       end
 
-      i = args.pop
-      name = args.pop
-      test = {it: name, input: i, output: o}
-
-      test[:it] = if test[:it].strip[/:\z/]
-                    "#{test[:it]} #{test[:input]}"
+      t[:it] = if t[:it].strip[/:\z/]
+                    "#{t[:it]} #{t[:input]}"
                   else
-                    test[:it]
+                    t[:it]
                   end
 
-      tests.last[:tests] << test
+      tests.last[:tests] << t
+    end
+
+    def raises o, m
+      self << {it: args.shift, input: args.pop, raises: [o, m]}
+    end
+
+    def output o
+      self << {it: args.shift, input: args.pop, output: o}
     end
 
   end # === class << self
@@ -81,13 +85,22 @@ It_Dsl.tests.each { |o|
   describe o[:describe] do
     o[:tests].each { |t|
       it t[:it] do
-        input  = t[:input]
-        output = t[:output]
-        actual = Escape_Escape_Escape.send(o[:describe], input)
 
-        case output
-        when Array
+        case
+
+        when t.has_key?(:output)
+          Escape_Escape_Escape.send(o[:describe], t[:input])
+          .should == output
+
+        when !t.has_key?(:output) && t[:raises]
+          should.raise(t[:raises].first) {
+            Escape_Escape_Escape.send(o[:describe], t[:input])
+          }.message.should.match(t[:raises].last)
+
+        when output.is_a?(Array)
+
           target = output.pop
+
           begin
             if output[1].is_a?(Array)
               meth = output.shift
@@ -98,10 +111,11 @@ It_Dsl.tests.each { |o|
             end
           end while !output.empty?
 
-          actual.should == target
+          Escape_Escape_Escape.send(o[:describe], t[:input]).
+            should == target
 
         else
-          actual.should == output
+          fail "Unknown args for test: #{t.inspect}"
 
         end # === case
       end # === it
