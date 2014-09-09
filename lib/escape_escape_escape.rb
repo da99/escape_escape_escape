@@ -175,14 +175,16 @@ class Escape_Escape_Escape
     # ===============================================
     alias_method :path, def href raw_str
       fail("Not a string: #{raw_str.inspect}") unless raw_str.is_a?(String)
-      str = clean_utf8(raw_str)
-      begin
-        uri = URI.parse(str)
-        return nil if uri.scheme.downcase['javascript'.freeze]
-        return nil if !uri.host && !uri.relative?
-        return str unless uri.relative?
 
-        str.split('/').map { |crumb|
+      clean = html(raw_str)
+
+      begin
+        uri = URI.parse(decode_html(raw_str))
+        return nil if uri.scheme.to_s.strip.downcase['javascript'.freeze]
+        return nil if !uri.host && !uri.relative?
+        return clean unless uri.relative?
+
+        clean.split('/').map { |crumb|
           crumb.
             gsub(REPEATING_DOTS, '.').
             gsub(INVALID_FILE_NAME_CHARS, '-').
