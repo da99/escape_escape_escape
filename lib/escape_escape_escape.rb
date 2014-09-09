@@ -154,12 +154,12 @@ class Escape_Escape_Escape
 
       # Save whitespace or strip.
       if !opts.include?(:spaces)
-        clean = clean.strip
+        clean.strip!
       end
 
       # Put back tabs by request.
       if opts.include?(:tabs)
-        clean = clean.gsub(HTML_TAB, TAB)
+        clean.gsub!(HTML_TAB, TAB)
       end
 
       clean
