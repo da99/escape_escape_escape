@@ -2,7 +2,8 @@
 require "multi_json"
 require "escape_escape_escape"
 
-BRACKET = " < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060
+BRACKETS = <<-EOF.split.join(' ')
+< %3C &lt &lt; &LT &LT; &#60 &#060 &#0060
 &#00060 &#000060 &#0000060 &#60; &#060; &#0060; &#00060;
 &#000060; &#0000060; &#x3c &#x03c &#x003c &#x0003c &#x00003c
 &#x000003c &#x3c; &#x03c; &#x003c; &#x0003c; &#x00003c;
@@ -11,7 +12,9 @@ BRACKET = " < %3C &lt &lt; &LT &LT; &#60 &#060 &#0060
 &#x3C &#x03C &#x003C &#x0003C &#x00003C &#x000003C &#x3C; &#x03C;
 &#x003C; &#x0003C; &#x00003C; &#x000003C; &#X3C &#X03C
 &#X003C &#X0003C &#X00003C &#X000003C &#X3C; &#X03C; &#X003C; &#X0003C;
-&#X00003C; &#X000003C; \x3c \x3C \u003c \u003C ".strip
+&#X00003C; &#X000003C; \x3c \x3C \u003c \u003C
+EOF
+
 
 class It_Dsl
   class << self
@@ -97,44 +100,6 @@ It_Dsl.tests.each { |o|
   end
 } # === It_Dsl
 
-
-
-describe ":clean_utf8" do
-
-  it "replaces nb spaces (160 codepoint) with regular ' ' spaces" do
-    s = [160, 160,64, 116, 119, 101, 108, 108, 121, 109, 101, 160, 102, 105, 108, 109].
-      inject('', :<<)
-
-    "@twellyme film".should == E.clean_utf8(s).strip
-  end
-
-  it "replaces tabs with spaces" do
-    s = "a\t \ta"
-    "a   a".should == E.clean_utf8(s)
-  end
-
-end # === describe :clean_utf8 ===
-
-
-
-describe ':un_e' do
-
-  it 'un-escapes escaped text mixed with HTML' do
-    s = "<p>Hi&amp;</p>"
-    "<p>Hi&</p>".should == E.un_e(s)
-  end
-
-  it 'un-escapes special chars: "Hello ©®∆"' do
-    s = "Hello &amp; World &#169;&#174;&#8710;"
-    t = "Hello & World ©®∆"
-    t.should == E.un_e(s)
-  end
-
-  it 'un-escapes all 70 different combos of "<"' do
-    "< %3C".should == E.un_e(BRACKET).split.uniq.join(' ')
-  end
-
-end # === describe :un_e
 
 
 describe ':escape' do
