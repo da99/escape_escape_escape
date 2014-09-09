@@ -38,9 +38,11 @@ class Escape_Escape_Escape
   Invalid            = Class.new(RuntimeError)
   Invalid_HREF       = Class.new(RuntimeError)
 
-  Unknown_Type       = Class.new(RuntimeError)
+  Invalid_Type       = Class.new(RuntimeError)
 
   TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
+
+  VALID_CSS          = /\A[a-z0-9\;\-\_\#\ ]+\z/i
 
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
 
@@ -205,6 +207,13 @@ class Escape_Escape_Escape
     def decode_html raw
       fail("Not a string: #{raw.inspect}") unless raw.is_a?(String)
       CODER.decode clean_utf8(raw)
+    end
+
+    def css raw
+      fail(Invalid_Type, "Not a string: #{raw.inspect}") unless raw.is_a?(String)
+      clean = html(raw)
+      return clean if clean[VALID_CSS]
+      fail Invalid, "contains invalid chars: #{raw.inspect}"
     end
 
     # ===============================================
