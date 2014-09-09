@@ -176,14 +176,14 @@ class Escape_Escape_Escape
     alias_method :path, def href raw_str
       fail("Not a string: #{raw_str.inspect}") unless raw_str.is_a?(String)
 
-      clean = html(raw_str)
-
       begin
         uri = URI.parse(decode_html(raw_str))
-        return nil if uri.scheme.to_s.strip.downcase['javascript'.freeze]
+        if uri.scheme
+          uri.scheme = uri.scheme.to_s.strip.downcase
+        end
+        return nil if (uri.scheme || ''.freeze)['javascript'.freeze]
         return nil if !uri.host && !uri.relative?
-        return clean unless uri.relative?
-        clean
+        html(EscapeUtils.escape_uri uri.to_s)
       rescue URI::InvalidURIError
         nil
       end

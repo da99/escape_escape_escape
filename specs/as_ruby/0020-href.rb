@@ -40,76 +40,53 @@ output nil
 
 it     "escapes valid https uri"
 input  "https://www.yahoo.com/&"
-output "https://www.yahoo.com/&amp;"
+output "https:&#47;&#47;www.yahoo.com&#47;&amp;"
 
 
 it     "escapes valid uri"
 input  "http://www.yahoo.com/&"
-output "http://www.yahoo.com/&amp;"
+output "http:&#47;&#47;www.yahoo.com&#47;&amp;"
 
 
-it     "escapes valid /path:"
+it     "escapes valid relative path:"
 input  "/path/mine/&"
-output "/path/mine/&amp;"
+output "&#47;path&#47;mine&#47;&amp;"
 
 
-it     "allows unicode uris"
+it     "returns nil if unicode uris:"
 input  "http://кц.рф"
-output "http://&#x43a;&#x446;.&#x440;&#x444;"
+output nil
 
 
-it    'normalizes address'
+it    'normalizes address:'
 input "hTTp://wWw.test.com/"
-output "http://wWw.test.com/"
+output "http:&#47;&#47;wWw.test.com&#47;"
 
 
-it     'returns html escaped chars: <'
+it     'returns nil if invalid uri: < :'
 input  "http://www.test.com/<something/"
-output "http:&#47;&#47;www.test.com&#47;&lt;something&#47;"
+output nil
 
-it     'returns html escaped chars:'
+
+it     'returns html escaped chars: \' :'
 input  "http://www.test.com/?test='something/"
 output "http:&#47;&#47;www.test.com&#47;?test=&#39;something&#47;"
 
 
-it    'decodes HTML entities:'
+it    'returns nil if HTML entities in uri:'
 input "http://6&#9;6.000146.0x7.147/"
-output "http:&#47;&#47;6\t6.000146.0x7.147&#47;"
+output nil
 
 
-it      'returns an encoded string if it contains HTML entities:'
+it      'returns nil if path contains html entities:'
 input   "http://www.test.com/&nbsp;s/"
-output  "http:&#47;&#47;www.test.com&#47;%C2%A0s&#47;"
+output  nil
 
 
-it     'returns an HTML encode string if query string contains HTML entities:'
+it     'returns nil if query string contains HTML entities:'
 input  "http://www.test.com/s/test?t&nbsp;test"
-output "http:&#47;&#47;www.test.com&#47;s&#47;test?t%C2%A0test"
+output nil
 
-
-it     'escapes all 70 different combos of "<"'
-input  BRACKETS
-output "&lt;"
-
-
-
-it   'escapes all keys in nested objects'
-input( {
-  " a >" => {" a >"=> "<b>test</b>"}
-})
-output(  {
-  " a &gt;" => { " a &gt;" => "&lt;b&gt;test&lt;&#47;b&gt;" }
-})
-
-
-it     'escapes all values in nested objects'
-input(  {name: {name: "<b>test</b>"}} )
-output( {name: {name: "&lt;b&gt;test&lt;&#47;b&gt;"}} )
-
-
-it    'escapes all values in nested arrays'
-input  [{name: {name: "<b>test</b>"}}]
-output [{name: {name: "&lt;b&gt;test&lt;&#47;b&gt;"}}]
 
 
 it     'does not re-escaped already escaped :href'
@@ -120,9 +97,9 @@ it     'lower-cases scheme'
 input  "hTTp://www.example.com/"
 output "http:&#47;&#47;www.example.com&#47;"
 
-it    'replaces &sOL;, regardless of case w: #047;'
+it    'returns nil if contains &sol;, regardless of case:'
 input  "htTp:&soL;&sOl;file.com/img.png"
-output "http:&#47;&#47;file.com&#47;img.png"
+output nil
 
 
 
