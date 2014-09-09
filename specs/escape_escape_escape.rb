@@ -105,34 +105,6 @@ It_Dsl.tests.each { |o|
 } # === It_Dsl
 
 
-describe( 'uri' ) {
-
-  it( 'normalizes address' ) {
-    s = "hTTp://wWw.test.com/"
-    E.uri(s).should == s.upcase
-  }
-
-  it( 'returns an Error if path contains: <' ) {
-    s = "http://www.test.com/<something/"
-    E.uri(s).should == s.upcase
-  }
-
-  it( 'returns an Error if path contains HTML entities' ) {
-    s = "http://6&#9;6.000146.0x7.147/"
-    E.uri(s).should == s.upcase
-  }
-
-  it( 'returns an Error if path contains HTML entities' ) {
-    s = "http://www.test.com/&nbsp;s/"
-    E.uri(s).should == s.upcase
-  }
-
-  it( 'returns an Error if query string contains HTML entities' ) {
-    s = "http://www.test.com/s/test?t&nbsp;test"
-    E.uri(s).should == s.upcase
-  }
-
-} # === end desc
 
 describe( 'Sanitize') {
 

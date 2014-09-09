@@ -58,18 +58,33 @@ input  "http://кц.рф"
 output "http://&#x43a;&#x446;.&#x440;&#x444;"
 
 
-it     "does not escape: true"
-input  true
-output true
+it    'normalizes address'
+input "hTTp://wWw.test.com/"
+output "http://wWw.test.com/"
 
 
-it     "does not escape: false"
-input  false
-output false
+it     'returns html escaped chars: <'
+input  "http://www.test.com/<something/"
+output "http:&#47;&#47;www.test.com&#47;&lt;something&#47;"
+
+it     'returns html escaped chars:'
+input  "http://www.test.com/?test='something/"
+output "http:&#47;&#47;www.test.com&#47;?test=&#39;something&#47;"
 
 
-it     "does not escape numbers"
-input  1
-output 1
+it    'decodes HTML entities:'
+input "http://6&#9;6.000146.0x7.147/"
+output "http:&#47;&#47;6\t6.000146.0x7.147&#47;"
+
+
+it      'returns an encoded string if it contains HTML entities:'
+input   "http://www.test.com/&nbsp;s/"
+output  "http:&#47;&#47;www.test.com&#47;%C2%A0s&#47;"
+
+
+it     'returns an HTML encode string if query string contains HTML entities:'
+input  "http://www.test.com/s/test?t&nbsp;test"
+output "http:&#47;&#47;www.test.com&#47;s&#47;test?t%C2%A0test"
+
 
 

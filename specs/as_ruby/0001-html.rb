@@ -26,3 +26,17 @@ it      'escapes all 70 different combos of "<"'
 input   BRACKETS
 output  "&lt; %3C"
 
+
+it     "does not escape: true"
+input  true
+output true
+
+
+it     "does not escape: false"
+input  false
+output false
+
+
+it     "does not escape numbers"
+input  1
+output 1
