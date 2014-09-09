@@ -20,7 +20,7 @@ output "&lt;p&gt;Hi&lt;&#47;p&gt;&lt;p&gt;Hi&lt;&#47;p&gt;"
 
 it     'does not escape special chars: "Hello ©®∆"' 
 input  "Hello & World ©®∆"
-output "Hello & World ©®∆"
+output "Hello &amp; World ©®∆"
 
 it      'escapes all 70 different combos of "<"'
 input   BRACKETS

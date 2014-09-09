@@ -7,6 +7,7 @@ set -u -e -o pipefail
 
 if [[ -f "$meth" ]]; then
   export RUBY_TEST_FILE="$meth"
+  shift
 fi
 
 files="$(echo -n specs/*.rb | tr ' ' '\n' | sort)"
