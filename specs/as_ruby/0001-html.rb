@@ -49,5 +49,12 @@ it     "removes unprintable characters"
 input  "end-\u2028-\u2029-"
 output "end---"
 
+it     "escapes &sol;:"
+input  "&sol;"
+output "&amp;sol;"
+
+it     "escapes &sol; regardless of case:"
+input  "&soL; &SoL; &SOL;"
+output "&amp;soL; &amp;SoL; &amp;SOL;"
 
 
