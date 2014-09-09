@@ -48,3 +48,6 @@ raises Escape_Escape_Escape::Invalid, /contains invalid chars/
 it     'returns cleaned string'
 input  '1px solid #000'
 output '1px solid #000'
+
+
+
