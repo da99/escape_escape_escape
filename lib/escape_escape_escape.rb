@@ -138,15 +138,18 @@ class Escape_Escape_Escape
       fail(ArgumentError, "INVALID OPTION: #{invalid_opts.inspect}" ) if !invalid_opts.empty?
       # =====================================================================================
 
+      raw_s = raw_s.dup
+
       # === Save tabs if requested.
-      raw_s = raw_s.gsub(TAB, HTML_TAB) if opts.include?(:tabs)
+      raw_s = raw_s.gsub!(TAB, HTML_TAB) if opts.include?(:tabs)
 
       clean = raw_s.
         encode(Encoding.find('utf-8') , ENCODING_OPTIONS_CLEAN_UTF8).
         scrub.
-        to_nfkc.
         gsub(TAB                           , TWO_SPACES).
-        gsub(MULTI_CONTROL_AND_UNPRINTABLE , BLANK)
+        gsub(MULTI_CONTROL_AND_UNPRINTABLE , BLANK).
+        gsub(REGEX_UNSUITABLE_CHARS        , ' ').
+        to_nfkc
 
       # Save whitespace or strip.
       if !opts.include?(:spaces)
