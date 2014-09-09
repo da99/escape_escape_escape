@@ -31,4 +31,4 @@ output "@twellyme film"
 
 it     "replaces tabs with spaces"
 input  "a\t \ta"
-output "a   a"
+output "a     a"
