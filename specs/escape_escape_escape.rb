@@ -109,7 +109,7 @@ It_Dsl.tests.each { |o|
             else
               fail "Unknown method: #{t[:output][0].inspect}"
             end
-          end while !output.empty?
+          end while !t[:output].empty?
 
           Escape_Escape_Escape.send(o[:describe], t[:input]).
             should == target
