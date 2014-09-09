@@ -26,19 +26,3 @@ it      'escapes all 70 different combos of "<"'
 input   BRACKETS
 output  "&lt; %3C"
 
-it 'escapes all keys in nested objects' do
-  html = "<b>test</b>"
-  t    = {" a &gt;" => {" a &gt;" => E.escape(html) }}
-  t.should == E.escape({" a >" => {" a >" => html}})
-end
-
-it 'escapes all values in nested objects' do
-  html = "<b>test</b>"
-  t    = {name: {name: E.escape(html)}}
-  t.should == E.escape({name:{name: html}})
-end
-
-it 'escapes all values in nested arrays' do
-  html = "<b>test</b>"
-  [{name: {name: E.escape(html)}}].should == E.escape([{name:{name: html}}])
-end
