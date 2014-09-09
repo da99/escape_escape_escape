@@ -104,40 +104,6 @@ It_Dsl.tests.each { |o|
 
 describe ':escape' do
 
-  it 'does not re-escape already escaped text mixed with HTML' do
-    h = "<p>Hi</p>"
-    e = E.escape(h)
-    o = e + h
-    E.escape(o).shold == E.escape(h + h)
-  end
-
-  it 'escapes special chars: "Hello ©®∆"' do
-    s = "Hello & World ©®∆"
-    t = "Hello &amp; World &#169;&#174;&#8710;"
-    t = "Hello &amp; World &copy;&reg;&#x2206;"
-    t.should == E.escape(s)
-  end
-
-  it 'escapes all 70 different combos of "<"' do
-    "&lt; %3C".should == E.escape(BRACKET).split.uniq.join(' ')
-  end
-
-  it 'escapes all keys in nested objects' do
-    html = "<b>test</b>"
-    t    = {" a &gt;" => {" a &gt;" => E.escape(html) }}
-    t.should == E.escape({" a >" => {" a >" => html}})
-  end
-
-  it 'escapes all values in nested objects' do
-    html = "<b>test</b>"
-    t    = {name: {name: E.escape(html)}}
-    t.should == E.escape({name:{name: html}})
-  end
-
-  it 'escapes all values in nested arrays' do
-    html = "<b>test</b>"
-    [{name: {name: E.escape(html)}}].should == E.escape([{name:{name: html}}])
-  end
 
   'uri url href'.split.each { |k| # ==============================================
 
