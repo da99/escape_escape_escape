@@ -40,6 +40,10 @@ class It_Dsl
     end
 
     def output o
+      if args.size != 2
+        fail "Missing values: #{args.inspect}, #{o.inspect}"
+      end
+
       i = args.pop
       name = args.pop
       test = {it: name, input: i, output: o}
@@ -103,52 +107,6 @@ It_Dsl.tests.each { |o|
 
 
 describe ':escape' do
-
-
-  'uri url href'.split.each { |k| # ==============================================
-
-    it "escapes values of keys :#{k} that are valid /path" do
-      a = {:key=>{:"#{k}" => "/path/mine/&"}}
-      t = {:key=>{:"#{k}" => "/path/mine/&amp;"}}
-      t.should == E.escape(a)
-    end
-
-    it "sets nil any keys ending with :#{k} and have invalid uri" do
-      a = {:key=>{:"#{k}" => "javascript:alert(s)"}}
-      t = {:key=>{:"#{k}" => nil                  }}
-      t.should == E.escape(a)
-    end
-
-    it "sets nil any keys ending with _#{k} and have invalid uri" do
-      a = {:key=>{:"my_#{k}" => "javascript:alert(s)"}}
-      t = {:key=>{:"my_#{k}" => nil                  }}
-      t.should == E.escape(a)
-    end
-
-    it "escapes values of keys with _#{k} that are valid https uri" do
-      a = {:key=>{:"my_#{k}" => "https://www.yahoo.com/&"}}
-      t = {:key=>{:"my_#{k}" => "https://www.yahoo.com/&amp;"}}
-      t.should == E.escape(a)
-    end
-
-    it "escapes values of keys with _#{k} that are valid uri" do
-      a = {:key=>{:"my_#{k}" => "http://www.yahoo.com/&"}}
-      t = {:key=>{:"my_#{k}" => "http://www.yahoo.com/&amp;"}}
-      t.should == E.escape(a)
-    end
-
-    it "escapes values of keys ending with _#{k} that are valid /path" do
-      a = {:key=>{:"my_#{k}" => "/path/mine/&"}}
-      t = {:key=>{:"my_#{k}" => "/path/mine/&amp;"}}
-      t.should == E.escape(a)
-    end
-
-    it "allows unicode uris" do
-      a = {:key=>{:"my_#{k}" => "http://кц.рф"}}
-      t = {:key=>{:"my_#{k}" => "http://&#x43a;&#x446;.&#x440;&#x444;"}}
-      t.should == E.escape(a)
-    end
-  }
 
   # === password field
   it "does not escape :pass_word key" do
