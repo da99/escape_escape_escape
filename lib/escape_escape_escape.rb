@@ -230,12 +230,7 @@ class Escape_Escape_Escape
         )
       end
 
-      if o.is_a?(Symbol)
-        result = send(method_name, o.to_s)
-        return(result.to_sym) if result.is_a?(String)
-        fail Invalid, "#{o} can't be escaped/sanitized."
-      end
-
+      return(send(method_name, o.to_s).to_sym) if o.is_a?(Symbol)
       return(o.map { |v| escape(v, method_name) }) if o.kind_of? Array
       return send(method_name, o) if o.is_a?(String)
       return o if o == true || o == false || o.kind_of?(Numeric)
