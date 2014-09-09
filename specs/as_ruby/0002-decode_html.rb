@@ -13,3 +13,9 @@ input "Hello & World ©®∆"
 it 'un-escapes all 70 different combos of "<"'
 input BRACKETS
 output "< %3C"
+
+
+it     'un-escapes all 70 different combos of "<"'
+input  BRACKETS
+output '<'
+

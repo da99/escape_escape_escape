@@ -87,4 +87,45 @@ input  "http://www.test.com/s/test?t&nbsp;test"
 output "http:&#47;&#47;www.test.com&#47;s&#47;test?t%C2%A0test"
 
 
+it     'escapes all 70 different combos of "<"'
+input  BRACKETS
+output "&lt;"
+
+
+
+it   'escapes all keys in nested objects'
+input( {
+  " a >" => {" a >"=> "<b>test</b>"}
+})
+output(  {
+  " a &gt;" => {
+    " a &gt;" => "&lt;b&gt;test&lt;&#47;b&gt;"
+  }
+})
+
+
+it     'escapes all values in nested objects'
+input(  {name: {name: "<b>test</b>"}} )
+output( {name: {name: "&lt;b&gt;test&lt;&#47;b&gt;"}} )
+
+
+it    'escapes all values in nested arrays'
+input  [{name:{name: "<b>test</b>"}}]
+output [{name: {name: "&lt;b&gt;test&lt;&#47;b&gt;"}}]
+
+
+it     'does not re-escaped already escaped :href'
+input  "http:&#47;&#47;www.example.com&#47;"
+output "http:&#47;&#47;www.example.com&#47;"
+
+it     'lower-cases scheme'
+input  "hTTp://www.example.com/"
+output "http:&#47;&#47;www.example.com&#47;"
+
+it    'replaces &sOL;, regardless of case w: #047;'
+input  "htTp:&soL;&sOl;file.com/img.png"
+output "http:&#47;&#47;file.com&#47;img.png"
+
+
+
 

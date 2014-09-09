@@ -40,3 +40,20 @@ output false
 it     "does not escape numbers"
 input  1
 output 1
+
+
+
+it     'has the same REGEX_UNSUITABLE_CHARS as Sanitize'
+input  Escape_Escape_Escape::REGEX_UNSUITABLE_CHARS
+output Sanitize::REGEX_UNSUITABLE_CHARS 
+
+it     'removes Unicode characters that do not belong in html'
+input  "b \u0340\u0341\u17a3\u17d3\u2028\u2029\u202a"
+output "b "
+
+it     "removes unprintable characters"
+input  "end\u2028-\u2029"
+output "end-"
+
+
+
