@@ -43,6 +43,8 @@ class Escape_Escape_Escape
   TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
 
   VALID_CSS          = /\A[a-z0-9\;\-\_\#\ ]+\z/i
+  VALID_CSS_SELECTOR = /\A[a-z0-9\#\:\_\-\.\ ]+\z/i
+  VALID_CSS_PROPERTY = /\A[a-z0-9-]+\z/i
 
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
 
