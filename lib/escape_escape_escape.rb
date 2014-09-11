@@ -35,10 +35,9 @@ class Escape_Escape_Escape
 
   CODER              = HTMLEntities.new(:xhtml1)
 
-  Invalid            = Class.new(RuntimeError)
-  Invalid_HREF       = Class.new(RuntimeError)
-
-  Invalid_Type       = Class.new(RuntimeError)
+  Invalid            = Class.new(StandardError)
+  Invalid_HREF       = Class.new(StandardError)
+  Invalid_Type       = Class.new(StandardError)
 
   TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
 
