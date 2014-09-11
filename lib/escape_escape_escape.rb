@@ -211,7 +211,7 @@ class Escape_Escape_Escape
       CODER.decode clean_utf8(raw)
     end
 
-    def css raw
+    def css_value raw
       fail(Invalid_Type, "Not a string: #{raw.inspect}") unless raw.is_a?(String)
       clean = html(raw)
       return clean if clean[VALID_CSS]
