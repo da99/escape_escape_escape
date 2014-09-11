@@ -42,9 +42,9 @@ class Escape_Escape_Escape
 
   TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
 
-  VALID_CSS          = /\A[a-z0-9\;\-\_\#\ ]+\z/i
+  VALID_CSS_VALUE    = /\A[a-z0-9\;\-\_\#\ ]+\z/i
   VALID_CSS_SELECTOR = /\A[a-z0-9\#\:\_\-\.\ ]+\z/i
-  VALID_CSS_PROPERTY = /\A[a-z0-9-]+\z/i
+  VALID_CSS_ATTR     = /\A[a-z0-9-]+\z/i
 
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
 
@@ -211,12 +211,16 @@ class Escape_Escape_Escape
       CODER.decode clean_utf8(raw)
     end
 
-    def css_value raw
-      fail(Invalid_Type, "Not a string: #{raw.inspect}") unless raw.is_a?(String)
-      clean = html(raw)
-      return clean if clean[VALID_CSS]
-      fail Invalid, "contains invalid chars: #{raw.inspect}"
-    end
+    %w{attr selector value}.each { |name|
+      eval <<-EOF, nil, __FILE__, __LINE__ + 1
+        def css_#{name} raw
+          fail(Invalid_Type, "Not a string: \#{raw.inspect}") unless raw.is_a?(String)
+          clean = html(raw)
+          return clean if clean[VALID_CSS_#{name.upcase}]
+          fail Invalid, "contains invalid chars: \#{raw.inspect}"
+        end
+      EOF
+    }
 
     # ===============================================
     # A better alternative than "Rack::Utils.escape_html". Escapes
