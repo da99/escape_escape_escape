@@ -22,6 +22,14 @@ require 'cgi' # Don't use URI.escape because it does not escape all invalid char
 require "addressable/uri"
 # ======================
 
+require 'oj'
+require 'multi_json'
+
+Oj.default_options = {:mode=>:strict}
+
+
+
+
 def Escape_Escape_Escape s
   Escape_Escape_Escape.escape(s)
 end
@@ -251,6 +259,24 @@ class Escape_Escape_Escape
 
       fail Invalid, "Not a String, Number, Array, or Hash"
     end # === def
+
+    def json_encode o
+      case o
+      when Array
+        Oj.dump(o, mode: :strict)
+      else
+        fail Invalid, "Not an Array: #{o.inspect}"
+      end
+    end
+
+    def json_decode o
+      case o
+      when String
+        Oj.strict_load clean_utf8(o)
+      else
+        fail Invalid, "Not a String: #{o.inspect}"
+      end
+    end
 
   end # === class self ===
 
