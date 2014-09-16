@@ -1,19 +1,19 @@
 
-it     'raises Invalid if it encounters an unallowed Object'
+it     'raises TypeError if it encounters an unallowed Object'
 input  [Object.new]
-raises Escape_Escape_Escape::Invalid, /object/
+raises TypeError, /Failed to dump Object Object/
 
 
 it     'raises Invalid if not an Array:'
 input( {'a'=>'hello'} )
-raises Escape_Escape_Escape::Invalid, /Hash/
+raises Escape_Escape_Escape::Invalid, /Not an Array/
 
 
 it     'raises Invalid if not an Array:'
 input  'a'
-raises Escape_Escape_Escape::Invalid, /String/
+raises Escape_Escape_Escape::Invalid, /Not an Array/
 
 
 it     'raises Invalid if not an Array:'
 input  1
-raises Escape_Escape_Escape::Invalid, /FixNum/
+raises Escape_Escape_Escape::Invalid, /Not an Array: 1/
