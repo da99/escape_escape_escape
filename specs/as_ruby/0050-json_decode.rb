@@ -1,7 +1,7 @@
 
 it     'strips unprintable chars'
-input  %^["a\u2029\u2028"]^
-output ["a"]
+input  %^["a\u2029\u2028b"]^
+output ["ab"]
 
 it     'raises Oj::ParseError if invalid JSON:'
 input   'a'
