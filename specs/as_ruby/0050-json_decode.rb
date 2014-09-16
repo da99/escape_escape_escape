@@ -12,3 +12,8 @@ raises Oj::ParseError, /unexpected character/
 it     'raises Invalid if not a String:'
 input  1
 raises Escape_Escape_Escape::Invalid, /1/
+
+
+it     'uses :strict_load'
+input  Oj.dump(Object.new, :mode=>:object)
+output({"^o" => "Object"})
