@@ -46,7 +46,7 @@ class It_Dsl
 
     def << t
       if !args.empty?
-        fail "Unknown values pending for: #{tests.last[:describe]}: #{args.inspect}, #{o.inspect}"
+        fail "Unknown values pending for: #{tests.last[:describe]}: #{args.inspect}"
       end
 
       t[:it] = if t[:it].strip[/:\z/]
