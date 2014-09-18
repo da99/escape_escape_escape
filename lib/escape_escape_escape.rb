@@ -43,9 +43,10 @@ class Escape_Escape_Escape
 
   CODER              = HTMLEntities.new(:xhtml1)
 
-  Invalid            = Class.new(StandardError)
-  Invalid_HREF       = Class.new(StandardError)
-  Invalid_Type       = Class.new(StandardError)
+  Invalid               = Class.new(StandardError)
+  Invalid_HREF          = Class.new(Invalid)
+  Invalid_Relative_HREF = Class.new(Invalid_HREF)
+  Invalid_Type          = Class.new(Invalid)
 
   TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
 
@@ -202,6 +203,14 @@ class Escape_Escape_Escape
       rescue URI::InvalidURIError => e
         raise Invalid_HREF, e.message
       end
+    end
+
+    def relative_href raw_str
+      str = Escape_Escape_Escape.decode_html href(raw_str)
+      uri = URI.parse(str)
+      fail( Invalid_Relative_HREF, "Is not relative: #{str}" ) if uri.scheme
+
+      Escape_Escape_Escape.html str
     end
 
     # ===============================================
