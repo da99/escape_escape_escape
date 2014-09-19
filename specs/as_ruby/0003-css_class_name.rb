@@ -15,3 +15,10 @@ input   'my_name'
 output  'my_name'
 
 
+it       'raises Invalid if it contains a dash:'
+input    'my-name'
+raises   Escape_Escape_Escape::Invalid, /my-name/
+
+
+
+

@@ -30,4 +30,11 @@ input    '0a'
 raises    Escape_Escape_Escape::Invalid, /0a/
 
 
+it        'raises Invalid if it contains a dash'
+input     'my-id'
+raises    Escape_Escape_Escape::Invalid, /my-id/
+
+
+
+
 
