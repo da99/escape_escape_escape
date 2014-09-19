@@ -55,8 +55,8 @@ class Escape_Escape_Escape
   VALID_CSS_ATTR       = /\A[a-z0-9-]+\z/i
   VALID_CSS_CLASS_NAME = /\A[a-z0-9\_]+\z/i
 
-  VALID_HTML_ID  = /\A[0-9a-z_]+\z/i;
-  VALID_HTML_TAG = /\A[0-9a-z_]+\z/i;
+  VALID_HTML_ID  = /\A[0-9a-z_]+\z/;
+  VALID_HTML_TAG = /\A[a-z][0-9a-z_]*\z/;
 
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
 
@@ -256,6 +256,17 @@ class Escape_Escape_Escape
     def html raw_text
       EscapeUtils.escape_html(decode_html(raw_text))
     end # === def html
+
+    def html_tag raw_o
+      case raw_o
+      when String, Symbol
+        str = raw_o.to_s.downcase
+        return str.to_sym if str[VALID_HTML_TAG]
+        raise Invalid, "Invalid chars: #{raw_o.inspect}"
+      else
+        fail TypeError, "Not a String or Symbol: #{raw_o.inspect}"
+      end
+    end
 
     def html_id raw_o
       case raw_o
