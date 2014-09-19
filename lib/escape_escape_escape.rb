@@ -55,7 +55,7 @@ class Escape_Escape_Escape
   VALID_CSS_ATTR       = /\A[a-z0-9-]+\z/i
   VALID_CSS_CLASS_NAME = /\A[a-z0-9\_]+\z/i
 
-  VALID_HTML_ID  = /\A[0-9a-z_]+\z/;
+  VALID_HTML_ID  = /\A[a-z][0-9a-z_]*\z/;
   VALID_HTML_TAG = /\A[a-z][0-9a-z_]*\z/;
 
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i

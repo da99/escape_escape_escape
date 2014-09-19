@@ -25,4 +25,9 @@ input   :My_Id
 output  :my_id
 
 
+it       'raises Invalid if it begins with a number'
+input    '0a'
+raises    Escape_Escape_Escape::Invalid, /0a/
+
+
 
