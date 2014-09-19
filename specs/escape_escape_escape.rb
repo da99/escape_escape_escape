@@ -50,7 +50,7 @@ class It_Dsl
       end
 
       t[:it] = if t[:it].strip[/:\z/]
-                    "#{t[:it]} #{t[:input]}"
+                    "#{t[:it]} #{t[:input].inspect}"
                   else
                     t[:it]
                   end

@@ -55,6 +55,9 @@ class Escape_Escape_Escape
   VALID_CSS_ATTR       = /\A[a-z0-9-]+\z/i
   VALID_CSS_CLASS_NAME = /\A[a-z0-9\_]+\z/i
 
+  VALID_HTML_ID  = /\A[0-9a-z_]+\z/i;
+  VALID_HTML_TAG = /\A[0-9a-z_]+\z/i;
+
   INVALID_FILE_NAME_CHARS = /[^a-z0-9\_\.]{1,}/i
 
   TABS           = /\t*/
@@ -66,9 +69,6 @@ class Escape_Escape_Escape
 
   NL             = "\n";
   SPACES         = /\ +/;
-
-  VALID_HTML_ID  = /\A[0-9a-z_]+\z/i;
-  VALID_HTML_TAG = /\A[0-9a-z_]+\z/i;
 
   REPEATING_DOTS = /\.{1,}/
 
@@ -253,9 +253,20 @@ class Escape_Escape_Escape
     # Text has to be UTF-8 before encoding, according to HTMLEntities gem.
     # Therefore, all text is run through <plaintext> before encoding.
     # ===============================================
-    def html( raw_text )
+    def html raw_text
       EscapeUtils.escape_html(decode_html(raw_text))
     end # === def html
+
+    def html_id raw_o
+      case raw_o
+      when String, Symbol
+        str = raw_o.to_s.downcase
+        return str.to_sym if str[VALID_HTML_ID]
+        raise Invalid, "Invalid chars: #{raw_o.inspect}"
+      else
+        fail TypeError, "Not a String or Symbol: #{raw_o.inspect}"
+      end
+    end
 
     def escape o, method_name = :html
       if o.kind_of? Hash
