@@ -33,7 +33,7 @@ it     'sanitizes css_href with encoded slashes'
 input  "smtp:&#047;&#047;file.com&#047;img.png"
 raises Escape_Escape_Escape::Invalid, /contains invalid chars/
 
-it    'sanitizes javascript: href'
+it    'sanitizes javascript: protocol w/js code'
 input 'jAvAscript://alert()'
 raises Escape_Escape_Escape::Invalid, /contains invalid chars/
 
