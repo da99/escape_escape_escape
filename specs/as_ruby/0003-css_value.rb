@@ -37,11 +37,11 @@ it    'sanitizes javascript: protocol w/js code'
 input 'jAvAscript://alert()'
 raises Escape_Escape_Escape::Invalid, /contains invalid chars/
 
-it    'sanitizes javascript: href with encoded colons:'
+it    'sanitizes javascript: protocol with encoded colons:'
 input "javascript&#058;//alert()"
 raises Escape_Escape_Escape::Invalid, /contains invalid chars/
 
-it     'sanitizes javascript: href with encoded slashes'
+it     'sanitizes javascript: protocol with encoded slashes'
 input  "javascript:&#047;&#047;alert()"
 raises Escape_Escape_Escape::Invalid, /contains invalid chars/
 
