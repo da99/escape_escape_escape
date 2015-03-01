@@ -50,7 +50,7 @@ class Escape_Escape_Escape
 
   TAG_PATTERN        = /\A[a-z]([a-z0-9\_]{0,}[a-z]{1,})?\z/i
 
-  VALID_CSS_VALUE      = /\A[a-z0-9\;\-\_\#\ ]+\z/i
+  VALID_CSS_VALUE      = /\A[a-z0-9\;\-\_\#\,\ ]+\z/i
   VALID_CSS_SELECTOR   = /\A[a-z0-9\#\:\_\-\.\ ]+\z/i
   VALID_CSS_ATTR       = /\A[a-z0-9-]+\z/i
   VALID_CSS_CLASS_NAME = /\A[a-z0-9\_]+\z/i

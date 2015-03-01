@@ -1,4 +1,8 @@
 
+it     'allows commas and spaces'
+input  "Ubuntu, Segoe UI, Helvetica, sans-serif"
+output "Ubuntu, Segoe UI, Helvetica, sans-serif"
+
 it     'sanitizes :css :expression regardless of the case'
 input  "eXprEssioN(alert('xss!'));"
 raises Escape_Escape_Escape::Invalid, /contains invalid chars/
@@ -6,7 +10,6 @@ raises Escape_Escape_Escape::Invalid, /contains invalid chars/
 it    'sanitizes :css :expression when ( or ) is an html entity: &#40; &#41;'
 input "eXprEssioN&#40;alert('xss!')&#41;"
 raises Escape_Escape_Escape::Invalid, /contains invalid chars/
-
 
 it     'sanitizes :css :expression when ( is html entity regardless of case: &rPaR;'
 input  "eXprEssioN&rPaR;alert('xss!'))"
