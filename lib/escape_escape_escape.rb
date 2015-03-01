@@ -200,7 +200,7 @@ class Escape_Escape_Escape
         fail( Invalid_HREF, "javascript:// is not allowed" ) if (uri.scheme || ''.freeze)['javascript'.freeze]
         fail( Invalid_HREF, "address is invalid") if !uri.host && !uri.relative?
 
-        html(EscapeUtils.escape_uri uri.to_s)
+        html(EscapeUtils.escape_uri(EscapeUtils.unescape_uri uri.to_s))
       rescue URI::InvalidURIError => e
         raise Invalid_HREF, e.message
       end
