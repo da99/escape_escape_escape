@@ -65,7 +65,7 @@ output "&#47;path&#47;mine&#47;&amp;"
 
 it     "raises Invalid_HREF if it contains unicode:"
 input  "http://кц.рф"
-raises Escape_Escape_Escape::Invalid_HREF, /bad URI/
+raises Escape_Escape_Escape::Invalid_HREF, /URI must be ascii only/
 
 
 it    'normalizes address:'
@@ -85,17 +85,17 @@ output "http:&#47;&#47;www.test.com&#47;?test=&#39;something&#47;"
 
 it    'fails w/ Invalid_HREF if HTML entities in uri:'
 input "http://6&#9;6.000146.0x7.147/"
-raises Escape_Escape_Escape::Invalid_HREF, /bad URI/
+raises Escape_Escape_Escape::Invalid_HREF, /bad URI\(is not URI\?\)/
 
 
 it     'fails w/ Invalid_HREF if path contains html entities:'
 input  "http://www.test.com/&nbsp;s/"
-raises Escape_Escape_Escape::Invalid_HREF, /bad URI/
+raises Escape_Escape_Escape::Invalid_HREF, /URI must be ascii only/
 
 
 it     'fails w/ Invalid_HREF if query string contains HTML entities:'
 input  "http://www.test.com/s/test?t&nbsp;test"
-raises Escape_Escape_Escape::Invalid_HREF, /bad URI/
+raises Escape_Escape_Escape::Invalid_HREF, /URI must be ascii only/
 
 
 
