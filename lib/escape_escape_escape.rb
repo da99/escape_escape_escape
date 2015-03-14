@@ -189,7 +189,7 @@ class Escape_Escape_Escape
     #
     # ===============================================
     alias_method :path, def href raw_str
-      fail("Not a string: #{raw_str.inspect}") unless raw_str.is_a?(String)
+      fail(Invalid_Type, "Not a string: #{raw_str.inspect}") unless raw_str.is_a?(String)
 
       begin
         uri = URI.parse(decode_html(raw_str))
