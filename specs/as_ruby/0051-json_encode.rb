@@ -1,7 +1,7 @@
 
 it     'raises TypeError if it encounters an unallowed Object'
 input( {'a'=>Object.new} )
-raises TypeError, /Failed to dump Object Object/
+raises ArgumentError, /Unknown Class for json:/
 
 
 it     'raises Invalid if not a Hash:'
@@ -17,3 +17,8 @@ raises Escape_Escape_Escape::Invalid, /Not an object\/hash/
 it     'raises Invalid if not an Hash:'
 input  1
 raises Escape_Escape_Escape::Invalid, /Not an object\/hash/
+
+
+it     'turns Symbol keys and values into Strings'
+input(  {:a=>:c}  )
+output  '{"a":"c"}'

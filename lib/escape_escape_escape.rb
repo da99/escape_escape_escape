@@ -300,7 +300,7 @@ class Escape_Escape_Escape
     def json_encode o
       case o
       when Hash
-        Oj.dump(o, mode: :strict)
+        Oj.dump(clean_for_json(o), mode: :strict)
       else
         fail Invalid, "Not an object/hash: #{o.inspect}"
       end
@@ -312,6 +312,25 @@ class Escape_Escape_Escape
         Oj.strict_load clean_utf8(o)
       else
         fail Invalid, "Not a String: #{o.inspect}"
+      end
+    end
+
+    private
+    def clean_for_json o
+      case o
+      when Hash
+        o.inject({}) { |memo, (k,v)|
+          memo[k.to_s] = clean_for_json(v)
+          memo
+        }
+      when Array
+        o.map { |v| clean_for_json v }
+      when Symbol
+        o.to_s
+      when String, Numeric, NilClass
+        o
+      else
+        fail ArgumentError, "Unknown Class for json: #{o.inspect}"
       end
     end
 
