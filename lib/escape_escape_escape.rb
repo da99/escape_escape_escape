@@ -299,10 +299,10 @@ class Escape_Escape_Escape
 
     def json_encode o
       case o
-      when Array
+      when Hash
         Oj.dump(o, mode: :strict)
       else
-        fail Invalid, "Not an Array: #{o.inspect}"
+        fail Invalid, "Not an object/hash: #{o.inspect}"
       end
     end
 
