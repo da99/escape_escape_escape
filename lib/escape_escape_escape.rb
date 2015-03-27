@@ -327,7 +327,7 @@ class Escape_Escape_Escape
         o.map { |v| clean_for_json v }
       when Symbol
         o.to_s
-      when String, Numeric, NilClass
+      when String, Numeric, NilClass, TrueClass, FalseClass
         o
       else
         fail ArgumentError, "Unknown Class for json: #{o.inspect}"

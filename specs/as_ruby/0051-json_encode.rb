@@ -22,3 +22,8 @@ raises Escape_Escape_Escape::Invalid, /Not an object\/hash/
 it     'turns Symbol keys and values into Strings'
 input(  {:a=>:c}  )
 output  '{"a":"c"}'
+
+
+it     'allows True/False as values'
+input(  {:a=>true, :b=>false}  )
+output  '{"a":true,"b":false}'
