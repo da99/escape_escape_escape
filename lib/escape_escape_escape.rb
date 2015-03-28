@@ -297,6 +297,11 @@ class Escape_Escape_Escape
       fail Invalid, "Not a String, Number, Array, or Hash"
     end # === def
 
+    def num v
+      fail ArgumentError, "Not a Numeric: #{v.inspect}" unless v.is_a?(Numeric)
+      v
+    end
+
     def json_encode o
       case o
       when Hash
