@@ -54,6 +54,7 @@ class Escape_Escape_Escape
   VALID_CSS_SELECTOR   = /\A[a-z0-9\#\:\_\-\.\ ]+\z/i
   VALID_CSS_ATTR       = /\A[a-z0-9-]+\z/i
   VALID_CSS_CLASS_NAME = /\A[a-z0-9\_]+\z/i
+  VALID_CSS_WIDTH      = /\A[a-z0-9\ %\.]+\Z/
 
   VALID_HTML_ID  = /\A[a-z][0-9a-z_]*\z/;
   VALID_HTML_TAG = /\A[a-z][0-9a-z_]*\z/;
@@ -238,6 +239,31 @@ class Escape_Escape_Escape
         end
       EOF
     }
+
+    def css *args
+      case
+      when args.size == 1
+        raw_name = :unknown
+        raw = args.first
+      when args.size == 2
+        raw_name, raw = args
+      else
+        fail ArgumentError, "Unknown args: #{args.inspect}"
+      end
+
+      name = raw_name.to_s.strip
+      clean = html(raw)
+
+      passes = case
+               when name['width'.freeze]
+                 clean[VALID_CSS_WIDTH]
+               else
+                 clean[VALID_CSS_VALUE]
+               end
+
+      fail ArgumentError, "contains invalid chars: #{raw.inspect}" unless passes
+      clean
+    end
 
     def css_class_name val
       return val if val.is_a?(String) && val[VALID_CSS_CLASS_NAME]

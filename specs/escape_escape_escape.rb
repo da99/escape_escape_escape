@@ -40,7 +40,7 @@ class It_Dsl
       args << str
     end
 
-    def input o
+    def input *o
       args << o
     end
 
@@ -99,21 +99,21 @@ It_Dsl.tests.each { |o|
         case
 
         when o[:describe] == :==
-          t[:input].should == t[:output]
+          t[:input].should == [t[:output]]
 
         when t.has_key?(:output)
-          Escape_Escape_Escape.send(o[:describe], t[:input])
+          Escape_Escape_Escape.send(o[:describe], *t[:input])
           .should == t[:output]
 
         when !t.has_key?(:output) && t[:raises]
           should.raise(t[:raises].first) {
-            Escape_Escape_Escape.send(o[:describe], t[:input])
+            Escape_Escape_Escape.send(o[:describe], *t[:input])
           }.message.should.match(t[:raises].last)
 
         when t.has_key?(:stack) && t[:stack].is_a?(Array)
 
           stack = t[:stack]
-          actual = Escape_Escape_Escape.send(o[:describe], t[:input])
+          actual = Escape_Escape_Escape.send(o[:describe], *t[:input])
           target = stack.pop
 
           begin
