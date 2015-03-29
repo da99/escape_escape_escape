@@ -52,5 +52,8 @@ it     'returns cleaned string'
 input  '1px solid #000'
 output '1px solid #000'
 
+it     'allows multiple sizes: 0 0 0.5em 3px'
+input  '0 0 0.5em 3px'
+output '0 0 0.5em 3px'
 
 
