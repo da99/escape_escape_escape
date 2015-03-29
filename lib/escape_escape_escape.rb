@@ -225,7 +225,7 @@ class Escape_Escape_Escape
 
     def decode_html raw
       fail("Not a string: #{raw.inspect}") unless raw.is_a?(String)
-      CODER.decode clean_utf8(raw)
+      CODER.decode clean_utf8(raw, :spaces)
     end
 
     %w{attr selector value}.each { |name|

@@ -43,7 +43,7 @@ raises RuntimeError, /Not a string: 1/
 
 it     'removes Unicode characters that do not belong in html'
 input  "b \u0340 \u0341 \u17a3 \u17d3 \u2028 \u2029 \u202a"
-output "b"
+output "b            "
 
 it     "removes unprintable characters"
 input  "end-\u2028-\u2029-"
@@ -57,4 +57,8 @@ it     "escapes &sol; regardless of case:"
 input  "&soL; &SoL; &SOL;"
 output "&amp;soL; &amp;SoL; &amp;SOL;"
 
+
+it     "does not strip text"
+input  "  test  "
+output "  test  "
 

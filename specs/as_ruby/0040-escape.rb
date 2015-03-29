@@ -14,8 +14,8 @@ raises Escape_Escape_Escape::Invalid, /Not a String, Number, Array, or Hash/i
 it 'escapes all String keys in nested objects'
 input({"   a >" => {" a >  " => "<b>test</b>"}})
 output({
-  "a &gt;" => {
-    "a &gt;" => "&lt;b&gt;test&lt;&#47;b&gt;"
+  "   a &gt;" => {
+    " a &gt;  " => "&lt;b&gt;test&lt;&#47;b&gt;"
   }
 })
 
@@ -23,8 +23,8 @@ output({
 it 'escapes all Symbol keys in nested objects'
 input({:"   a >   " => {:" a >" => "<b>test</b>"}})
 output({
-  :"a &gt;" => {
-    :"a &gt;" => "&lt;b&gt;test&lt;&#47;b&gt;"
+  :"   a &gt;   " => {
+    :" a &gt;" => "&lt;b&gt;test&lt;&#47;b&gt;"
   }
 })
 
